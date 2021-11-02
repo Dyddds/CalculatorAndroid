@@ -318,7 +318,7 @@
         android:inputType="none"
         android:textSize="36sp"
         android:textAlignment="textEnd"
-        tools:ignore="Label/for"
+        tools:ignore="LabelFor"
         />
 
     <ImageButton
