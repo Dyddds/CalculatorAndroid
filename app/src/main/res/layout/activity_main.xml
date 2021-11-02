@@ -28,6 +28,8 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/circle"
                 android:textSize="24sp"
+                android:backgroundTint="#DD2C00"
+
 
                 />
 
@@ -298,25 +300,35 @@
                 android:layout_margin="5dp"
                 android:background="@drawable/circle"
                 android:textSize="24sp"
+                android:backgroundTint="#43A047"
                 />
         </TableRow>
     </TableLayout>
 
-    <TextView
+    <EditText
         android:id="@+id/textView"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:text="@string/display"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:autofillHints="false"
+        android:inputType="none"
+        android:textSize="36sp"
+        android:textAlignment="textEnd"
+        tools:ignore="Label/for"
+        />
 
-    <Button
+    <ImageButton
         android:id="@+id/button21"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Button"
+        android:contentDescription="@string/backspace"
+        android:background="@drawable/circle"
+        app:srcCompat="@drawable/backspace"
+        android:layout_margin="5dp"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:textColor="#283593"
         app:layout_constraintBottom_toTopOf="@+id/tableLayout"
