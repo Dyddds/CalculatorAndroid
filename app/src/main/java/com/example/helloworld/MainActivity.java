@@ -8,9 +8,15 @@ import android.text.SpannableStringBuilder;
 import android.view.View;
 import android.widget.EditText;
 
+import org.mariuszgromada.math.mxparser.Expression;
+
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity {
 
     private EditText display;
+    private String calcStr = new String("");
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,49 +46,85 @@ public class MainActivity extends AppCompatActivity {
         display.setSelection(cursorPos+1);
     }
 
+    //Clears entry if the entry is showing result
+    public void showingResult(){
+        if (calcStr == "") {
+            display.setText("");
+        }
+    }
+
     public void zeroBTN(View view){
+        showingResult();
         updateText("0");
+        calcStr += "0";
     }
     public void oneBTN(View view){
+        showingResult();
         updateText("1");
+        calcStr += "1";
     }
     public void twoBTN(View view){
+        showingResult();
         updateText("2");
+        calcStr += "2";
     }
     public void threeBTN(View view){
+        showingResult();
         updateText("3");
+        calcStr += "3";
     }
     public void fourBTN(View view){
+        showingResult();
         updateText("4");
+        calcStr += "4";
     }
     public void fiveBTN(View view){
+        showingResult();
         updateText("5");
+        calcStr += "5";
     }
     public void sixBTN(View view){
+        showingResult();
         updateText("6");
+        calcStr += "6";
     }
     public void sevenBTN(View view){
+        showingResult();
         updateText("7");
+        calcStr += "7";
     }
     public void eightBTN(View view){
+        showingResult();
         updateText("8");
+        calcStr += "8";
     }
     public void nineBTN(View view){
+        showingResult();
         updateText("9");
+        calcStr += "9";
     }
     public void multiplyBTN(View view){
+        showingResult();
         updateText("*");
+        calcStr += "*";
     }
     public void divideBTN(View view){
+        showingResult();
         updateText("/");
+        calcStr += "/";
     }
     public void addBTN(View view){
+        showingResult();
         updateText("+");
+        calcStr += "+";
     }
     public void subtractBTN(View view){
+        showingResult();
         updateText("-");
+        calcStr += "-";
     }
     public void parBTN(View view){
+        showingResult();
         int cursorPos = display.getSelectionStart();
         int openPar = 0;
         int closedPar = 0;
@@ -98,32 +140,55 @@ public class MainActivity extends AppCompatActivity {
         }
         if (openPar == closedPar || display.getText().toString().substring(textLen-1,textLen).equals("(")){
             updateText("(");
+            calcStr += "(";
         }
         else if (closedPar < openPar && !display.getText().toString().substring(textLen-1,textLen).equals("(")){
             updateText(")");
+            calcStr += ")";
         }
         display.setSelection(cursorPos+1);
     }
     public void clearBTN(View view){
         display.setText("");
+        calcStr = "";
     }
     public void expBTN(View view){
+        showingResult();
         updateText("^");
+        calcStr += "^";
     }
     public void plusMinusBTN(View view){
-        updateText("-");
+        showingResult();
+        //updateText("-");
     }
     public void decimalBTN(View view){
+        showingResult();
         updateText(".");
+        calcStr += ".";
     }
-    public void equalBTN(View view){ }
+    public void equalBTN(View view){
+        showingResult();
+        Expression e = new Expression(calcStr);
+        display.setText("");
+        double r = e.calculate();
+        //int rI;
+        if ((r % 1) == 0) {
+            //rI = (int) rD;
+            updateText(String.valueOf((int) r));
+        } else {
+            updateText(String.valueOf(r));
+        }
+        calcStr = "";
+    }
 
     public void backspaceBTN(View view){
+        showingResult();
         int cursorPos = display.getSelectionStart();
         int textLen = display.getText().length();
         if (cursorPos != 0 && textLen !=0){
             SpannableStringBuilder selection = (SpannableStringBuilder) display.getText();
             selection.replace(cursorPos-1,cursorPos,"");
+            calcStr = calcStr.substring(0, calcStr.length() - 1);
             display.setText(selection);
             display.setSelection(cursorPos-1);
         }
