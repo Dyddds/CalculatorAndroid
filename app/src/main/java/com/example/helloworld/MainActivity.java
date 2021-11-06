@@ -46,6 +46,30 @@ public class MainActivity extends AppCompatActivity {
         display.setSelection(cursorPos+1);
     }
 
+    private void updateTextFromFront(String strToAdd){
+        String oldStr = display.getText().toString();
+        int cursorPos = display.getSelectionStart();
+        String leftStr = oldStr.substring(0,cursorPos);
+        String rightStr = oldStr.substring(cursorPos);
+        if(getString(R.string.display).equals(display.getText().toString())){
+            display.setText(strToAdd);
+        }
+        else {
+            display.setText(String.format("%s%s%s", strToAdd, leftStr, rightStr));
+        }
+        display.setSelection(cursorPos+1);
+    }
+
+    private void removeFrontChar() {
+        String oldStr = display.getText().toString();
+        if (oldStr.isEmpty()) {
+            return;
+        }
+        int cursorPos = display.getSelectionStart();
+        display.setText(oldStr.substring(1));
+        display.setSelection(cursorPos - 1);
+    }
+
     //Clears entry if the entry is showing result
     public void showingResult(){
         if (calcStr == "") {
@@ -159,7 +183,15 @@ public class MainActivity extends AppCompatActivity {
     }
     public void plusMinusBTN(View view){
         showingResult();
-        //updateText("-");
+
+        if (calcStr.startsWith("-")) {
+            removeFrontChar();
+            calcStr = calcStr.substring(1);
+        } else {
+            updateTextFromFront("-");
+            calcStr = "-" + calcStr;
+        }
+
     }
     public void decimalBTN(View view){
         showingResult();
