@@ -210,7 +210,10 @@ public class MainActivity extends AppCompatActivity {
         } else {
             updateText(String.valueOf(r));
         }
-        calcStr = "";
+        calcStr = display.getText().toString();
+        int len = calcStr.length();
+        display.setSelection(len);
+
     }
 
     public void backspaceBTN(View view){
