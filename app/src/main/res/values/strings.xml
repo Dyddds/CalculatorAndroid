@@ -13,19 +13,29 @@
     <string name='seven'>7</string>
     <string name='eight'>8</string>
     <string name='nine'>9</string>
+    <string name='a'>a</string>
+    <string name='b'>b</string>
+    <string name='c'>c</string>
+    <string name='d'>d</string>
+    <string name='e'>e</string>
+    <string name='f'>f</string>
 
-    <string name='clear'>C</string>
+
+    <string name='clear'>Clr</string>
     <string name='exponent'>^</string>
     <string name='parentheses'>( )</string>
+    <string name='modulo'>%</string>
     <string name='divide'>/</string>
     <string name='multiply'>*</string>
     <string name='add'>+</string>
     <string name='subtract'>-</string>
+    <string name='squareroot'>√</string>
+    <string name='pi'>π</string>
     <string name='plusMinus'>+\-</string>
     <string name='point'>.</string>
     <string name='equals'>=</string>
 
-    <string name='backspace'></string>
+    <string name='backspace'>Backspace</string>
 
     <string name='display'>Enter in a value</string>
 

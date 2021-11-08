@@ -15,19 +15,31 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     private EditText display;
-    private String calcStr = new String("");
+    private EditText resDisplay;
+    private String calcStr = "";
+    private String entryStr = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         display = findViewById(R.id.input);
-        display.setShowSoftInputOnFocus(false);
+        //display.setShowSoftInputOnFocus(false);
         display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(getString(R.string.display).equals(display.getText().toString())){
                     display.setText("");
+                }
+            }
+        });
+        resDisplay = findViewById(R.id.result);
+        //display.setShowSoftInputOnFocus(false);
+        resDisplay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(getString(R.string.display).equals(resDisplay.getText().toString())){
+                    resDisplay.setText("");
                 }
             }
         });
@@ -127,6 +139,53 @@ public class MainActivity extends AppCompatActivity {
         updateText("9");
         calcStr += "9";
     }
+    public void aBTN(View view){
+        showingResult();
+        updateText("A");
+        //calcStr += "A";
+    }
+    public void bBTN(View view){
+        showingResult();
+        updateText("B");
+        //calcStr += "B";
+    }
+    public void cBTN(View view){
+        showingResult();
+        updateText("C");
+        //calcStr += "C";
+    }
+    public void dBTN(View view){
+        showingResult();
+        updateText("D");
+        //calcStr += "D";
+    }
+    public void eBTN(View view){
+        showingResult();
+        updateText("E");
+        //calcStr += "E";
+    }
+    public void fBTN(View view){
+        showingResult();
+        updateText("F");
+        //calcStr += "F";
+    }
+    public void exponentBTN(View view){
+        showingResult();
+        updateText("^");
+        calcStr += "^";
+    }
+    public void squarerootBTN(View view){
+        showingResult();
+        updateText("√");
+        calcStr += "sqrt";
+    }
+    public void piBTN(View view){
+        showingResult();
+        updateText("π");
+        calcStr += "π";
+
+    }
+
     public void multiplyBTN(View view){
         showingResult();
         updateText("*");
@@ -147,6 +206,12 @@ public class MainActivity extends AppCompatActivity {
         updateText("-");
         calcStr += "-";
     }
+    public void moduloBTN(View view){
+        showingResult();
+        updateText("%");
+        calcStr += "#";
+    }
+
     public void parBTN(View view){
         showingResult();
         int cursorPos = display.getSelectionStart();
