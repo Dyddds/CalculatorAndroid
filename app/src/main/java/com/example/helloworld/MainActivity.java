@@ -9,14 +9,24 @@ import android.widget.EditText;
 import org.mariuszgromada.math.mxparser.Expression;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    enum Notation {
+        Prefix, Infix, Postfix
+    }
+    enum Base {
+        Binary, Octal, Decimal, Duodecimal, Hexadecimal
+    }
+
+    Notation nMode = Notation.Prefix;
+    Base bMode = Base.Decimal;
     private EditText display;
     private String entryStr = "";
+    ArrayList<String> history = new ArrayList<String>();
     private boolean isResult = false;
-    //ArrayList<String> entryStack = new ArrayList<String>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         display = findViewById(R.id.input);
         //display.setShowSoftInputOnFocus(false);
+        //enforceNotationButtons();
+        //enforceBaseButtons();
         display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -34,23 +46,49 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*private void updateText(String strToAdd){
-        String oldStr = display.getText().toString();
-        int cursorPos = display.getSelectionStart();
-        String leftStr = oldStr.substring(0,cursorPos);
-        String rightStr = oldStr.substring(cursorPos);
-        if(getString(R.string.display).equals(display.getText().toString())){
-            display.setText(strToAdd);
+    private String prefixToInfix(ArrayList<String> preStack){
+        ArrayList<String> infixStack = new ArrayList<String>();
+        for (int i = preStack.size()-1; i >= 0 ; i--) {
+            String str = preStack.get(i);
+            if (str.matches(".*[-+/*^%]") && i < preStack.size()-2) {
+                String exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else {
+                infixStack.add(str);
+            }
         }
-        else {
-            display.setText(String.format("%s%s%s", leftStr, strToAdd, rightStr));
+        return String.join("", infixStack);
+    }
+    private String postfixToInfix(ArrayList<String> postStack){
+        ArrayList<String> infixStack = new ArrayList<String>();
+        for (int i = 0; i < postStack.size() ; i++) {
+            String str = postStack.get(i);
+            if (str.matches(".*[-+/*^%]") && postStack.size() > 2) {
+                String exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else {
+                infixStack.add(str);
+            }
         }
-        display.setSelection(cursorPos+1);
-    }*/
-
-    private String getInputText(){
-        EditText itxt = (EditText)findViewById(R.id.input);
-        return itxt.getText().toString();
+        return String.join("", infixStack);
+    }
+    private String getCleanedCalc(String calc){
+        ArrayList<String> entryStack = new ArrayList( Arrays.asList(calc.trim().split("\\s+")));
+        entryStack.replaceAll(s-> s.replace("%", "#"));
+        entryStack.replaceAll(s-> s.replace("√", "sqrt"));
+        entryStack.replaceAll(s-> s.replace("π", "pi"));
+        switch (nMode) {
+            case Prefix:
+                return prefixToInfix(entryStack);
+            case Postfix:
+                return postfixToInfix(entryStack);
+            default:
+                return String.join("", entryStack);
+        }
     }
 
     //Clears entry if the entry is showing result
@@ -63,7 +101,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void alphaNumUpdate(){
-        if (!entryStr.equals("") && isResult) {
+        if (isResult) {
             entryStr += "";
             display.setText(entryStr);
             isResult = false;
@@ -168,7 +206,7 @@ public class MainActivity extends AppCompatActivity {
         display.setText(entryStr);
     }
     public void piBTN(View view){
-        //alphaNumUpdate();
+        alphaNumUpdate();
         entryStr += "π";
         display.setText(entryStr);
     }
@@ -229,7 +267,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void clearBTN(View view){
-        if (!getInputText().equals("")) {
+        if (!entryStr.equals("")) {
             entryStr = "";
             display.setText(entryStr);
         }
@@ -244,11 +282,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void equalBTN(View view){
         operatorUpdate();
-        Expression e = new Expression(entryStr);
+        history.add(entryStr);
+        String calcStr = getCleanedCalc(entryStr);
+
+        Expression e = new Expression(calcStr);
         display.setText("");
         double r = e.calculate();
         if ((r % 1) == 0) {
-            entryStr = String.valueOf((int) r);
+            entryStr = String.valueOf((long) r);
             display.setText(entryStr);
         } else {
             entryStr = String.valueOf(r);
