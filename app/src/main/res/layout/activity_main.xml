@@ -192,7 +192,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/circle"
-                android:onClick="exponentBTN"
+                android:onClick="expBTN"
                 android:text="@string/exponent"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
@@ -269,7 +269,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/circle"
-                android:onClick="squarerootBTN"
+                android:onClick="squareRootBTN"
                 android:text="@string/squareroot"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
@@ -433,15 +433,15 @@
                 app:backgroundTint="@null" />
 
             <Button
-                android:id="@+id/plusMinusBTN"
+                android:id="@+id/spaceBTN"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/circle"
-                android:onClick="plusMinusBTN"
-                android:text="@string/plusMinus"
+                android:onClick="spaceBTN"
+                android:text="@string/spacebar"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
                 app:backgroundTint="@null" />
@@ -490,24 +490,6 @@
                 app:backgroundTint="@null" />
         </TableRow>
     </TableLayout>
-
-    <EditText
-        android:id="@+id/result"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="-5dp"
-        android:text=""
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:autofillHints="false"
-        android:inputType="none"
-        android:textSize="36sp"
-        android:textAlignment="textEnd"
-        tools:ignore="LabelFor"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        />
 
     <EditText
         android:id="@+id/input"
