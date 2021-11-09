@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import org.mariuszgromada.math.mxparser.Expression;
@@ -21,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
 
-    Notation nMode = Notation.Prefix;
+    Notation nMode = Notation.Infix;
     Base bMode = Base.Decimal;
     private EditText display;
     private String entryStr = "";
@@ -34,8 +35,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         display = findViewById(R.id.input);
         //display.setShowSoftInputOnFocus(false);
-        //enforceNotationButtons();
-        //enforceBaseButtons();
+        enforceNotationButtons();
+        enforceBaseButtons();
         display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,6 +45,156 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void enforceNotationButtons(){
+        Button sqrt = findViewById(R.id.sqrootBTN);
+        Button paran = findViewById(R.id.parenthesesBTN);
+        if (nMode == Notation.Infix) {
+            sqrt.setEnabled(true);
+            sqrt.setBackgroundResource(R.drawable.buttonenabled);
+            paran.setEnabled(true);
+            paran.setBackgroundResource(R.drawable.buttonenabled);
+        } else {
+            sqrt.setEnabled(false);
+            sqrt.setBackgroundResource(R.drawable.buttondisabled);
+            paran.setEnabled(false);
+            paran.setBackgroundResource(R.drawable.buttondisabled);
+        }
+    }
+    private void enforceBaseButtons(){
+        switch (bMode){
+            case Binary:
+                disableBinary();
+                break;
+            case Octal:
+                disableOctal();
+                enableOctal();
+                break;
+            case Decimal:
+                disableDecimal();
+                enableDecimal();
+                break;
+            case Duodecimal:
+                disableDuodecimal();
+                enableDuodecimal();
+                break;
+            case Hexadecimal:
+                enableHexadecimal();
+                break;
+        }
+    }
+    private void enableOctal(){
+        Button b2 = findViewById(R.id.twoBTN);
+        Button b3 = findViewById(R.id.threeBTN);
+        Button b4 = findViewById(R.id.fourBTN);
+        Button b5 = findViewById(R.id.fiveBTN);
+        Button b6 = findViewById(R.id.sixBTN);
+        Button b7 = findViewById(R.id.sevenBTN);
+
+        b2.setEnabled(true);
+        b2.setBackgroundResource(R.drawable.buttonenabled);
+        b3.setEnabled(true);
+        b3.setBackgroundResource(R.drawable.buttonenabled);
+        b4.setEnabled(true);
+        b4.setBackgroundResource(R.drawable.buttonenabled);
+        b5.setEnabled(true);
+        b5.setBackgroundResource(R.drawable.buttonenabled);
+        b6.setEnabled(true);
+        b6.setBackgroundResource(R.drawable.buttonenabled);
+        b7.setEnabled(true);
+        b7.setBackgroundResource(R.drawable.buttonenabled);
+
+    }
+    private void enableDecimal(){
+        enableOctal();
+        Button b8 = findViewById(R.id.eightBTN);
+        Button b9 = findViewById(R.id.nineBTN);
+
+        b8.setEnabled(true);
+        b8.setBackgroundResource(R.drawable.buttonenabled);
+        b9.setEnabled(true);
+        b9.setBackgroundResource(R.drawable.buttonenabled);
+    }
+    private void enableDuodecimal(){
+        enableDecimal();
+        Button bA = findViewById(R.id.aBTN);
+        Button bB = findViewById(R.id.bBTN);
+
+        bA.setEnabled(true);
+        bA.setBackgroundResource(R.drawable.buttonenabled);
+        bB.setEnabled(true);
+        bB.setBackgroundResource(R.drawable.buttonenabled);
+    }
+    private void enableHexadecimal(){
+        enableDuodecimal();
+        Button bC = findViewById(R.id.cBTN);
+        Button bD = findViewById(R.id.dBTN);
+        Button bE = findViewById(R.id.eBTN);
+        Button bF = findViewById(R.id.fBTN);
+
+        bC.setEnabled(true);
+        bC.setBackgroundResource(R.drawable.buttonenabled);
+        bD.setEnabled(true);
+        bD.setBackgroundResource(R.drawable.buttonenabled);
+        bE.setEnabled(true);
+        bE.setBackgroundResource(R.drawable.buttonenabled);
+        bF.setEnabled(true);
+        bF.setBackgroundResource(R.drawable.buttonenabled);
+    }
+    private void disableBinary(){
+        disableOctal();
+        Button b2 = findViewById(R.id.twoBTN);
+        Button b3 = findViewById(R.id.threeBTN);
+        Button b4 = findViewById(R.id.fourBTN);
+        Button b5 = findViewById(R.id.fiveBTN);
+        Button b6 = findViewById(R.id.sixBTN);
+        Button b7 = findViewById(R.id.sevenBTN);
+
+        b2.setEnabled(false);
+        b2.setBackgroundResource(R.drawable.buttondisabled);
+        b3.setEnabled(false);
+        b3.setBackgroundResource(R.drawable.buttondisabled);
+        b4.setEnabled(false);
+        b4.setBackgroundResource(R.drawable.buttondisabled);
+        b5.setEnabled(false);
+        b5.setBackgroundResource(R.drawable.buttondisabled);
+        b6.setEnabled(false);
+        b6.setBackgroundResource(R.drawable.buttondisabled);
+        b7.setEnabled(false);
+        b7.setBackgroundResource(R.drawable.buttondisabled);
+    }
+    private void disableOctal(){
+        disableDecimal();
+        Button b8 = findViewById(R.id.eightBTN);
+        Button b9 = findViewById(R.id.nineBTN);
+        b8.setEnabled(false);
+        b8.setBackgroundResource(R.drawable.buttondisabled);
+        b9.setEnabled(false);
+        b9.setBackgroundResource(R.drawable.buttondisabled);
+    }
+    private void disableDecimal(){
+        disableDuodecimal();
+        Button bA = findViewById(R.id.aBTN);
+        Button bB = findViewById(R.id.bBTN);
+        bA.setEnabled(false);
+        bA.setBackgroundResource(R.drawable.buttondisabled);
+        bB.setEnabled(false);
+        bB.setBackgroundResource(R.drawable.buttondisabled);
+    }
+    private void disableDuodecimal(){
+        Button bC = findViewById(R.id.cBTN);
+        Button bD = findViewById(R.id.dBTN);
+        Button bE = findViewById(R.id.eBTN);
+        Button bF = findViewById(R.id.fBTN);
+        bC.setEnabled(false);
+        bC.setBackgroundResource(R.drawable.buttondisabled);
+        bD.setEnabled(false);
+        bD.setBackgroundResource(R.drawable.buttondisabled);
+        bE.setEnabled(false);
+        bE.setBackgroundResource(R.drawable.buttondisabled);
+        bF.setEnabled(false);
+        bF.setBackgroundResource(R.drawable.buttondisabled);
     }
 
     private String prefixToInfix(ArrayList<String> preStack){
@@ -306,6 +457,4 @@ public class MainActivity extends AppCompatActivity {
             display.setText(entryStr);
         }
     }
-
-
 }
