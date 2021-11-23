@@ -1,19 +1,33 @@
-package com.example.helloworld;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.otz.calculator;
 
 import android.os.Bundle;
 import android.view.View;
+import android.view.Menu;
 import android.widget.Button;
 import android.widget.EditText;
 
-import org.mariuszgromada.math.mxparser.Expression;
-import org.apache.commons.lang3.StringUtils;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.navigation.NavigationView;
 
-import java.util.Arrays;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.otz.calculator.databinding.ActivityMainBinding;
+
+import org.apache.commons.lang3.StringUtils;
+import org.mariuszgromada.math.mxparser.Expression;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
+
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
 
     enum Notation {
         Prefix, Infix, Postfix
@@ -32,9 +46,13 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        setSupportActionBar(binding.appBarMain.toolbar);
+
         display = findViewById(R.id.input);
-        //display.setShowSoftInputOnFocus(false);
         enforceNotationButtons();
         enforceBaseButtons();
         display.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +63,32 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home, R.id.nav_theme, R.id.nav_history)
+                .setOpenableLayout(drawer)
+                .build(); //R.id.nav_notation, R.id.nav_base
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
     }
 
     private void enforceNotationButtons(){

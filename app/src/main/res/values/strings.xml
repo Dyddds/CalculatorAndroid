@@ -1,6 +1,18 @@
 <resources>
-    <string name="app_name">MyApplication</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="app_name">Programmer\'s Calculator</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <!-- Nav Titles -->
+    <string name="menu_home">Calculator</string>
+    <string name="menu_notation">Notation</string>
+    <string name="menu_base">Base</string>
+    <string name="menu_history">History</string>
+    <string name="menu_theme">Theme</string>
 
     <!-- Button Titles -->
     <string name='zero'>0</string>
@@ -39,20 +51,4 @@
     <string name='spacebar'>⎵</string>
 
     <string name='display'>Enter in a value</string>
-
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
