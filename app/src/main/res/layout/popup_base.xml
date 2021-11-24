@@ -18,55 +18,60 @@
         android:background="#eeeeee"/>
 
     <Button
+        android:id="@+id/Bin"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncBinary"
+        android:onClick="changeBase"
         android:text="Base 2:\nBinary"
         android:textSize="24sp" />
 
     <Button
+        android:id="@+id/Oct"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncOctal"
+        android:onClick="changeBase"
         android:text="Base 8:\nOctal"
         android:textSize="24sp" />
 
     <Button
+        android:id="@+id/Dec"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncDecimal"
+        android:onClick="changeBase"
         android:text="Base 10:\nDecimal"
         android:textSize="24sp" />
     <Button
+        android:id="@+id/Duo"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncDuodecimal"
+        android:onClick="changeBase"
         android:text="Base 12:\nDuodecimal"
         android:textSize="24sp" />
     <Button
+        android:id="@+id/Hex"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncHexadecimal"
+        android:onClick="changeBase"
         android:text="Base 16:\nHexadecimal"
         android:textSize="24sp" />
 

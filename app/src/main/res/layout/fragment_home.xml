@@ -16,7 +16,6 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-
             <Button
                 android:id="@+id/clearBTN"
                 style="@style/Widget.AppCompat.Button.Borderless"
@@ -507,5 +506,7 @@
         tools:ignore="LabelFor"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:singleLine="true"
+        android:scrollHorizontally="true"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
