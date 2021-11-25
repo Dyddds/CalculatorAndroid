@@ -9,34 +9,6 @@
         android:id="@+id/nav_home"
         android:name="com.otz.calculator.ui.home.HomeFragment"
         android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" >
-        <action
-            android:id="@+id/action_nav_home_to_nav_history"
-            app:destination="@id/nav_history" />
-        <action
-            android:id="@+id/action_nav_home_to_nav_theme"
-            app:destination="@id/nav_theme" />
-    </fragment>
+        tools:layout="@layout/fragment_home" />
 
-    <fragment
-        android:id="@+id/nav_history"
-        android:name="com.otz.calculator.ui.history.HistoryFragment"
-        android:label="@string/menu_history"
-        tools:layout="@layout/fragment_history" >
-        <action
-            android:id="@+id/action_nav_history_pop"
-            app:popUpTo="@id/nav_history"
-            app:popUpToInclusive="true" />
-    </fragment>
-
-    <fragment
-        android:id="@+id/nav_theme"
-        android:name="com.otz.calculator.ui.theme.ThemeFragment"
-        android:label="@string/menu_theme"
-        tools:layout="@layout/fragment_theme" >
-        <action
-            android:id="@+id/action_nav_theme_pop"
-            app:popUpTo="@id/nav_theme"
-            app:popUpToInclusive="true" />
-    </fragment>
 </navigation>

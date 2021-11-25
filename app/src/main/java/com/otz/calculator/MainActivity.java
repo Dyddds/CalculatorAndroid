@@ -1,5 +1,6 @@
 package com.otz.calculator;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +12,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -55,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     Notation nMode;
     Base bMode;
 
+    private ScrollView hList;
+    private TextView hItem;
     private EditText display;
     private String entryStr;
     ArrayList<String> history = new ArrayList<String>();
@@ -73,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
+        hList = findViewById(R.id.historyList);
+        hItem = findViewById(R.id.historyItem);
+
         display = findViewById(R.id.input);
         enforceNotationButtons();
         enforceBaseButtons();
@@ -90,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_history)
+                R.id.nav_home)
                 .setOpenableLayout(drawer)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -106,8 +114,10 @@ public class MainActivity extends AppCompatActivity {
                     popup(1);
                 } else if (id == R.id.nav_base){
                     popup(2);
-                } else if (id == R.id.nav_theme){
+                } else if (id == R.id.nav_history){
                     popup(3);
+                } else if (id == R.id.nav_theme){
+                    popup(4);
                 }
                 //This is for maintaining the behavior of the Navigation view
                 NavigationUI.onNavDestinationSelected(menuItem,navController);
@@ -118,20 +128,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
+    /*@Override
     public void onRestart() {
         super.onRestart();
         entryStr = "";
         enforceNotationButtons();
         enforceBaseButtons();
-    }
+    }*/
 
-    @Override
+    /*@Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
-    }
+    }*/
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -152,6 +162,9 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 popupView = inflater.inflate(R.layout.popup_base, null);
                 break;
+            case 3:
+                popupView = inflater.inflate(R.layout.popup_history, null);
+                break;
             default:
                 popupView = inflater.inflate(R.layout.popup_theme, null);
                 break;
@@ -160,6 +173,10 @@ public class MainActivity extends AppCompatActivity {
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        if (id == 3) {
+            //width = getResources().getConfiguration().screenWidthDp - 20;
+            width = (int) ((getResources().getConfiguration().screenWidthDp - 20) * Resources.getSystem().getDisplayMetrics().density);
+        }
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
