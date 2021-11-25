@@ -1,5 +1,8 @@
 package com.otz.calculator;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -8,9 +11,12 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Menu;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -34,7 +40,6 @@ import org.mariuszgromada.math.mxparser.Expression;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 
 //TODO Add Cursor on result screen
 //TODO Auto scroll screen to right most side
@@ -58,11 +63,16 @@ public class MainActivity extends AppCompatActivity {
     Notation nMode;
     Base bMode;
 
-    private ScrollView hList;
-    private TextView hItem;
+    //private ScrollView hList;
+    //private TextView hItem;
+    //View v;
+    //ViewGroup insertPoint;
+
     private EditText display;
     private String entryStr;
     ArrayList<String> history = new ArrayList<String>();
+
+
     private boolean isResult = false;
     DecimalFormat df = new DecimalFormat("#.#######");
 
@@ -78,8 +88,8 @@ public class MainActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.appBarMain.toolbar);
 
-        hList = findViewById(R.id.historyList);
-        hItem = findViewById(R.id.historyItem);
+        //hList = findViewById(R.id.historyList);
+        //hItem = findViewById(R.id.historyItem);
 
         display = findViewById(R.id.input);
         enforceNotationButtons();
@@ -115,7 +125,8 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_base){
                     popup(2);
                 } else if (id == R.id.nav_history){
-                    popup(3);
+                    //popup(3);
+                    historyDialog();
                 } else if (id == R.id.nav_theme){
                     popup(4);
                 }
@@ -150,8 +161,20 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    public void historyDialog() {
+        //String[] name = {"cake", "jame", "tom"};
+        Dialog dialog = new Dialog(MainActivity.this, R.style.Dialog);
+        dialog.setContentView(R.layout.popup_history);
+        ListView list = dialog.findViewById(R.id.historyList);
+        dialog.setTitle("History");
+        dialog.setCancelable(true);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,history);
+        list.setAdapter(adapter);
+        dialog.show();
+    }
     public void popup(int id) {
         // inflate the layout of the popup window
+
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView;
@@ -173,10 +196,10 @@ public class MainActivity extends AppCompatActivity {
 
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        if (id == 3) {
+        /*if (id == 3) {
             //width = getResources().getConfiguration().screenWidthDp - 20;
             width = (int) ((getResources().getConfiguration().screenWidthDp - 20) * Resources.getSystem().getDisplayMetrics().density);
-        }
+        }*/
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         boolean focusable = true; // lets taps outside the popup also dismiss it
         final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
@@ -184,6 +207,12 @@ public class MainActivity extends AppCompatActivity {
         // show the popup window
         // which view you pass in doesn't matter, it is only used for the window tolken
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+        /*if (id == 3) {
+            ArrayAdapter adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.history_item, name);
+            ListView listView = findViewById(R.id.historyList);
+            listView.setAdapter(adapter);
+        }*/
 
         // dismiss the popup window when touched
         popupView.setOnTouchListener(new View.OnTouchListener() {
@@ -392,6 +421,19 @@ public class MainActivity extends AppCompatActivity {
         bE.setBackgroundResource(R.drawable.buttondisabled);
         bF.setEnabled(false);
         bF.setBackgroundResource(R.drawable.buttondisabled);
+    }
+
+    private void addToHistory(String item) {
+
+        /*LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        v = vi.inflate(R.layout.history_item, null);
+
+        TextView textView = v.findViewById(R.id.historyItem);
+        textView.setText(item);
+
+        //ViewGroup insertPoint = findViewById(R.id.drawer_layout);
+        insertPoint = findViewById(R.id.historyList);
+        insertPoint.addView(v);*/
     }
 
     private String prefixToInfix(ArrayList<String> preStack){
@@ -662,6 +704,7 @@ public class MainActivity extends AppCompatActivity {
     public void equalBTN(View view){
         operatorUpdate();
         history.add(entryStr);
+        //addToHistory(entryStr);
         String calcStr = getCleanedCalc(entryStr);
 
         Expression e = new Expression(calcStr);
@@ -687,6 +730,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         display.setText(entryStr);
+        history.add("= " + entryStr + " ");
+        //addToHistory("= " + entryStr);
 
         /*if ((r % 1) == 0) {
             entryStr = String.valueOf((long) r);
