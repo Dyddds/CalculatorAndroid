@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:background="#dddddd"
+    android:orientation="vertical" >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Choose Theme"
+        android:textSize="24sp"
+        android:textAllCaps="true"
+        android:background="#eeeeee"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_weight="1"
+        android:onClick="ncBinary"
+        android:text="Light"
+        android:textSize="24sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_weight="1"
+        android:onClick="ncOctal"
+        android:text="Dark"
+        android:textSize="24sp" />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_weight="1"
+        android:onClick="ncDecimal"
+        android:text="Flower"
+        android:textSize="24sp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_weight="1"
+        android:onClick="ncDuodecimal"
+        android:text="Space"
+        android:textSize="24sp" />
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="-5dp"
+        android:layout_weight="1"
+        android:onClick="ncHexadecimal"
+        android:text="Wooden"
+        android:textSize="24sp" />
+
+
+</LinearLayout>

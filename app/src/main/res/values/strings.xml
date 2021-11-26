@@ -1,8 +1,20 @@
 <resources>
-    <string name="app_name">MyApplication</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="app_name">Programmer\'s Calculator</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
 
-    <!-- Button Titles -->
+    <!-- Nav Titles -->
+    <string name="menu_home">Calculator</string>
+    <string name="menu_notation">Notation</string>
+    <string name="menu_base">Base</string>
+    <string name="menu_history">History</string>
+    <string name="menu_theme">Theme</string>
+
+    <!-- Operand Buttons -->
     <string name='zero'>0</string>
     <string name='one'>1</string>
     <string name='two'>2</string>
@@ -19,9 +31,13 @@
     <string name='d'>d</string>
     <string name='e'>e</string>
     <string name='f'>f</string>
+    <string name='point'>.</string>
 
+    <!-- Constants -->
+    <string name='pi'>π</string>
+    <string name='eConst'>e</string>
 
-    <string name='clear'>Clr</string>
+    <!-- Regular Operators -->
     <string name='exponent'>^</string>
     <string name='parentheses'>( )</string>
     <string name='modulo'>%</string>
@@ -30,29 +46,23 @@
     <string name='add'>+</string>
     <string name='subtract'>-</string>
     <string name='squareroot'>√</string>
-    <string name='pi'>π</string>
-    <string name='plusMinus'>+\-</string>
-    <string name='point'>.</string>
-    <string name='equals'>=</string>
 
+    <!-- Boolean Operators -->
+    <string name='not'>NOT</string>
+    <string name='and'>AND</string>
+    <string name='or'>OR</string>
+    <string name='xor'>XOR</string>
+    <string name='nand'>NAND</string>
+    <string name='nor'>NOR</string>
+    <string name='xnor'>XNOR</string>
+
+    <!-- Display Manipulator -->
+    <string name='equals'>=</string>
+    <string name='clear'>Clr</string>
     <string name='backspace'>Backspace</string>
     <string name='spacebar'>⎵</string>
 
+    <string name='superT'>︽</string>
+
     <string name='display'>Enter in a value</string>
-
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

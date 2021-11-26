@@ -1,4 +1,4 @@
-package com.example.helloworld;
+package com.otz.calculator;
 
 import org.junit.Test;
 

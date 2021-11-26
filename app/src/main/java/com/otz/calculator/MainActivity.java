@@ -1,19 +1,58 @@
-package com.example.helloworld;
+package com.otz.calculator;
 
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.Menu;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.ListView;
+import android.widget.PopupWindow;
+import android.widget.ScrollView;
+import android.widget.TextView;
 
-import org.mariuszgromada.math.mxparser.Expression;
+import com.google.android.material.navigation.NavigationView;
+
+import androidx.annotation.NonNull;
+import androidx.core.view.GravityCompat;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.otz.calculator.databinding.ActivityMainBinding;
+
 import org.apache.commons.lang3.StringUtils;
+import org.mariuszgromada.math.mxparser.Expression;
 
-import java.util.Arrays;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+//TODO Add Cursor on result screen
+//TODO Auto scroll screen to right most side
+//TODO Reorganize clear screen and update screen
+//TODO Separate into different classes
+//TODO loading history on different bases or notations
+//TODO Fix XNOR
+//TODO Fix Delete with Boolean Operators
 
 public class MainActivity extends AppCompatActivity {
+
+    private AppBarConfiguration mAppBarConfiguration;
+    private ActivityMainBinding binding;
 
     enum Notation {
         Prefix, Infix, Postfix
@@ -22,19 +61,33 @@ public class MainActivity extends AppCompatActivity {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
 
-    Notation nMode = Notation.Infix;
-    Base bMode = Base.Decimal;
+    Notation nMode;
+    Base bMode;
+
     private EditText display;
-    private String entryStr = "";
+    private String entryStr;
+    private Dialog dialog;
+    private PopupWindow popupWindow;
+
     ArrayList<String> history = new ArrayList<String>();
     private boolean isResult = false;
+    private boolean superToggle;
+    DecimalFormat df = new DecimalFormat("#.#######");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        nMode = Notation.Infix;
+        bMode = Base.Decimal;
+        entryStr = "";
+        dialog = new Dialog(MainActivity.this, R.style.Dialog);
+        superToggle = false;
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        setSupportActionBar(binding.appBarMain.toolbar);
+
         display = findViewById(R.id.input);
-        //display.setShowSoftInputOnFocus(false);
         enforceNotationButtons();
         enforceBaseButtons();
         display.setOnClickListener(new View.OnClickListener() {
@@ -45,19 +98,140 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        DrawerLayout drawer = binding.drawerLayout;
+        NavigationView navigationView = binding.navView;
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        mAppBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.nav_home)
+                .setOpenableLayout(drawer)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
+        NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
+                int id = menuItem.getItemId();
+                //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
+                if (id == R.id.nav_notation){
+                    //Toast.makeText(getApplicationContext(), "Home", Toast.LENGTH_SHORT).show();
+                    popup(1);
+                } else if (id == R.id.nav_base){
+                    popup(2);
+                } else if (id == R.id.nav_history){
+                    //popup(3);
+                    historyDialog();
+                } else if (id == R.id.nav_theme){
+                    popup(4);
+                }
+                //This is for maintaining the behavior of the Navigation view
+                //NavigationUI.onNavDestinationSelected(menuItem,navController);
+                //This is for closing the drawer after acting on it
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
+        return NavigationUI.navigateUp(navController, mAppBarConfiguration)
+                || super.onSupportNavigateUp();
+    }
+
+    public void historyDialog() {
+        dialog.show();;
+        dialog.setContentView(R.layout.popup_history);
+        ListView list = dialog.findViewById(R.id.historyList);
+        dialog.setTitle("History");
+        dialog.setCancelable(true);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,history);
+        list.setAdapter(adapter);
+    }
+    public void popup(int id) {
+        LayoutInflater inflater = (LayoutInflater)
+                getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView;
+        switch(id) {
+            case 1:
+                popupView = inflater.inflate(R.layout.popup_notation, null);
+                break;
+            case 2:
+                popupView = inflater.inflate(R.layout.popup_base, null);
+                break;
+            case 3:
+                popupView = inflater.inflate(R.layout.popup_history, null);
+                break;
+            default:
+                popupView = inflater.inflate(R.layout.popup_theme, null);
+                break;
+        }
+
+        // create the popup window
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        boolean focusable = true; // lets taps outside the popup also dismiss it
+        popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
+
+    }
+
+    public void changeNotation(View v) {
+        switch (v.getId()) {
+            case (R.id.Pre):
+                nMode = Notation.Prefix;
+                enforceNotationButtons();
+                break;
+            case (R.id.In):
+                nMode = Notation.Infix;
+                enforceNotationButtons();
+                break;
+            case (R.id.Post):
+                nMode = Notation.Postfix;
+                enforceNotationButtons();
+                break;
+        }
+        entryStr = "";
+        display.setText(entryStr);
+        popupWindow.dismiss();
+    }
+    public void changeBase(View v) {
+        switch (v.getId()) {
+            case (R.id.Bin):
+                bMode = Base.Binary;
+                enforceBaseButtons();
+                break;
+            case (R.id.Oct):
+                bMode = Base.Octal;
+                enforceBaseButtons();
+                break;
+            case (R.id.Dec):
+                bMode = Base.Decimal;
+                enforceBaseButtons();
+                break;
+            case (R.id.Duo):
+                bMode = Base.Duodecimal;
+                enforceBaseButtons();
+                break;
+            case (R.id.Hex):
+                bMode = Base.Hexadecimal;
+                enforceBaseButtons();
+                break;
+        }
+        entryStr = "";
+        display.setText(entryStr);
+        popupWindow.dismiss();
     }
 
     private void enforceNotationButtons(){
-        Button sqrt = findViewById(R.id.sqrootBTN);
         Button paran = findViewById(R.id.parenthesesBTN);
         if (nMode == Notation.Infix) {
-            sqrt.setEnabled(true);
-            sqrt.setBackgroundResource(R.drawable.buttonenabled);
             paran.setEnabled(true);
             paran.setBackgroundResource(R.drawable.buttonenabled);
         } else {
-            sqrt.setEnabled(false);
-            sqrt.setBackgroundResource(R.drawable.buttondisabled);
             paran.setEnabled(false);
             paran.setBackgroundResource(R.drawable.buttondisabled);
         }
@@ -82,6 +256,14 @@ public class MainActivity extends AppCompatActivity {
             case Hexadecimal:
                 enableHexadecimal();
                 break;
+        }
+        Button decimalPoint = findViewById(R.id.pointBTN);
+        if (bMode != Base.Decimal) {
+            decimalPoint.setEnabled(false);
+            decimalPoint.setBackgroundResource(R.drawable.buttondisabled);
+        } else {
+            decimalPoint.setEnabled(true);
+            decimalPoint.setBackgroundResource(R.drawable.buttonenabled);
         }
     }
     private void enableOctal(){
@@ -197,6 +379,19 @@ public class MainActivity extends AppCompatActivity {
         bF.setBackgroundResource(R.drawable.buttondisabled);
     }
 
+    public void historyItemBTN(View view) {
+        TextView hI = (TextView) view;
+        String str = hI.getText().toString();
+        dialog.dismiss();
+
+        if (str.matches(".*[=].*")) {
+            entryStr = str.replaceAll("[= ]", "");
+        } else {
+            entryStr = str;
+        }
+        display.setText(entryStr);
+    }
+
     private String prefixToInfix(ArrayList<String> preStack){
         ArrayList<String> infixStack = new ArrayList<String>();
         for (int i = preStack.size()-1; i >= 0 ; i--) {
@@ -204,6 +399,10 @@ public class MainActivity extends AppCompatActivity {
             if (str.matches(".*[-+/*^%]") && i < preStack.size()-2) {
                 String exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
                 infixStack.remove(infixStack.size() - 1);
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else if (str.matches("sqrt") && i < preStack.size()-1) {
+                String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
             } else {
@@ -214,11 +413,15 @@ public class MainActivity extends AppCompatActivity {
     }
     private String postfixToInfix(ArrayList<String> postStack){
         ArrayList<String> infixStack = new ArrayList<String>();
-        for (int i = 0; i < postStack.size() ; i++) {
+        for (int i = 0; i < postStack.size(); i++) {
             String str = postStack.get(i);
             if (str.matches(".*[-+/*^%]") && postStack.size() > 2) {
                 String exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
                 infixStack.remove(infixStack.size() - 1);
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else if (str.matches("sqrt") && postStack.size() > 1) {
+                String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
             } else {
@@ -229,6 +432,34 @@ public class MainActivity extends AppCompatActivity {
     }
     private String getCleanedCalc(String calc){
         ArrayList<String> entryStack = new ArrayList( Arrays.asList(calc.trim().split("\\s+")));
+        String str;
+        entryStack.replaceAll(s-> s.replace("NOT", "~"));
+        entryStack.replaceAll(s-> s.replace("NAND", "~&"));
+        entryStack.replaceAll(s-> s.replace("AND", "&"));
+        entryStack.replaceAll(s-> s.replace("XOR", "(+)"));
+        entryStack.replaceAll(s-> s.replace("XNOR", "~(+)"));
+        entryStack.replaceAll(s-> s.replace("NOR", "~|"));
+        entryStack.replaceAll(s-> s.replace("OR", "|"));
+
+        for (int i = 0; i < entryStack.size(); i++) {
+            str = entryStack.get(i);
+            if (str.matches(".*[1234567890ABCDEF].*")) {
+                switch (bMode) {
+                    case Binary:
+                        entryStack.set(i, Integer.toString(Integer.parseInt(str, 2), 10));
+                        break;
+                    case Octal:
+                        entryStack.set(i, Integer.toString(Integer.parseInt(str, 8), 10));
+                        break;
+                    case Duodecimal:
+                        entryStack.set(i, Integer.toString(Integer.parseInt(str, 12), 10));
+                        break;
+                    case Hexadecimal:
+                        entryStack.set(i, Integer.toString(Integer.parseInt(str, 16), 10));
+                        break;
+                }
+            }
+        }
         entryStack.replaceAll(s-> s.replace("%", "#"));
         entryStack.replaceAll(s-> s.replace("√", "sqrt"));
         entryStack.replaceAll(s-> s.replace("π", "pi"));
@@ -356,9 +587,13 @@ public class MainActivity extends AppCompatActivity {
         entryStr += ".";
         display.setText(entryStr);
     }
-    public void piBTN(View view){
+    public void constBTN(View view){
         alphaNumUpdate();
-        entryStr += "π";
+        if (superToggle) {
+            entryStr += "e";
+        } else {
+            entryStr += "π";
+        }
         display.setText(entryStr);
     }
 
@@ -397,6 +632,61 @@ public class MainActivity extends AppCompatActivity {
         operatorUpdate();
         entryStr += "%";
         display.setText(entryStr);
+    }
+
+    public void notBTN(View view){
+        operatorUpdate();
+        entryStr += "NOT";
+        display.setText(entryStr);
+    }
+    public void andBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "NAND";
+        } else {
+            entryStr += "AND";
+        }
+        display.setText(entryStr);
+    }
+    public void orBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "NOR";
+        } else {
+            entryStr += "OR";
+        }
+        display.setText(entryStr);
+    }
+    public void xorBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "XNOR";
+        } else {
+            entryStr += "XOR";
+        }
+        display.setText(entryStr);
+    }
+
+    public void superBTN(View view){
+        superToggle = !superToggle;
+        Button bSuper = findViewById(R.id.superBTN);
+        Button bConst = findViewById(R.id.constBTN);
+        Button bAND = findViewById(R.id.andBTN);
+        Button bOR = findViewById(R.id.orBTN);
+        Button bXOR = findViewById(R.id.xorBTN);
+        if (superToggle) {
+            bSuper.setBackgroundResource(R.drawable.buttontoggleenabled);
+            bConst.setText(R.string.eConst);
+            bAND.setText(R.string.nand);
+            bOR.setText(R.string.nor);
+            bXOR.setText(R.string.xnor);
+        } else {
+            bSuper.setBackgroundResource(R.drawable.buttontoggledisabled);
+            bConst.setText(R.string.pi);
+            bAND.setText(R.string.and);
+            bOR.setText(R.string.or);
+            bXOR.setText(R.string.xor);
+        }
     }
 
     public void parBTN(View view){
@@ -439,13 +729,28 @@ public class MainActivity extends AppCompatActivity {
         Expression e = new Expression(calcStr);
         display.setText("");
         double r = e.calculate();
-        if ((r % 1) == 0) {
-            entryStr = String.valueOf((long) r);
-            display.setText(entryStr);
-        } else {
-            entryStr = String.valueOf(r);
-            display.setText(entryStr);
+        String str = df.format(r);
+
+        switch (bMode) {
+            case Binary:
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 2);
+                break;
+            case Octal:
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 8);
+                break;
+            case Duodecimal:
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 12);
+                break;
+            case Hexadecimal:
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 16);
+                break;
+            default:
+                entryStr = str;
         }
+
+        display.setText(entryStr);
+        history.add("= " + entryStr + " ");
+
         isResult = true;
     }
 
