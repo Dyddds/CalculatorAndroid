@@ -16,6 +16,7 @@
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
+
             <Button
                 android:id="@+id/clearBTN"
                 style="@style/Widget.AppCompat.Button.Borderless"
@@ -30,8 +31,87 @@
                 android:text="@string/clear"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
+                app:backgroundTint="@null" />
 
+            <Button
+                android:id="@+id/andBTN"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonenabled"
+                android:onClick="andBTN"
+                android:text="@string/and"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
 
+            <Button
+                android:id="@+id/orBTN"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonenabled"
+                android:onClick="orBTN"
+                android:text="@string/or"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
+
+            <Button
+                android:id="@+id/xorBTN"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttonenabled"
+                android:onClick="xorBTN"
+                android:text="@string/xor"
+                android:textColor="#ffffff"
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
+
+            <ImageButton
+                android:id="@+id/delBTN"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:contentDescription="@string/backspace"
+                android:background="@drawable/buttonenabled"
+                android:backgroundTint="#DD2C00"
+                android:onClick="backspaceBTN"
+                android:textColor="#ffffff"
+                android:textSize="24sp"
+                app:backgroundTint="@null"
+                app:layout_constraintBottom_toTopOf="@+id/delBTN"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:srcCompat="@drawable/backspace"
+                />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <Button
+                android:id="@+id/superBTN"
+                style="@style/Widget.AppCompat.Button.Borderless"
+                android:layout_width="0dp"
+                android:layout_height="70dp"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:background="@drawable/buttontoggledisabled"
+                android:onClick="superBTN"
+                android:text="@string/superT"
+                android:textColor="#ffffff"
+                android:textSize="24sp"
                 app:backgroundTint="@null" />
 
             <Button
@@ -46,8 +126,6 @@
                 android:text="@string/d"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
-
-
                 app:backgroundTint="@null" />
 
             <Button
@@ -79,26 +157,19 @@
                 android:textSize="24sp"
                 app:backgroundTint="@null" />
 
-            <ImageButton
-                android:id="@+id/delBTN"
+            <Button
+
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
-                android:contentDescription="@string/backspace"
                 android:background="@drawable/buttonenabled"
-                android:backgroundTint="#DD2C00"
-                android:onClick="backspaceBTN"
+                android:onClick="notBTN"
+                android:text="@string/not"
                 android:textColor="#ffffff"
-                android:textSize="24sp"
-                app:backgroundTint="@null"
-                app:layout_constraintBottom_toTopOf="@+id/delBTN"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
-                app:layout_constraintStart_toStartOf="parent"
-                app:srcCompat="@drawable/backspace"
-                />
+                android:textSize="12sp"
+                app:backgroundTint="@null" />
         </TableRow>
 
         <TableRow
@@ -338,20 +409,18 @@
             android:layout_height="68dp">
 
             <Button
-                android:id="@+id/piBTN"
+                android:id="@+id/constBTN"
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:background="@drawable/buttonenabled"
-                android:onClick="piBTN"
+                android:onClick="constBTN"
                 android:textAllCaps="false"
                 android:text="@string/pi"
                 android:textColor="#ffffff"
                 android:textSize="24sp"
-
-
                 app:backgroundTint="@null" />
 
             <Button

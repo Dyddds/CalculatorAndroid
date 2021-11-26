@@ -43,10 +43,11 @@ import java.util.Arrays;
 
 //TODO Add Cursor on result screen
 //TODO Auto scroll screen to right most side
-//TODO Add Bitwise operations
 //TODO Reorganize clear screen and update screen
-//TODO Create working onStart function
-//TODO Fix result screen manipulation after showing result
+//TODO Separate into different classes
+//TODO loading history on different bases or notations
+//TODO Fix XNOR
+//TODO Fix Delete with Boolean Operators
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,10 +67,11 @@ public class MainActivity extends AppCompatActivity {
     private EditText display;
     private String entryStr;
     private Dialog dialog;
-    PopupWindow popupWindow;
+    private PopupWindow popupWindow;
 
     ArrayList<String> history = new ArrayList<String>();
     private boolean isResult = false;
+    private boolean superToggle;
     DecimalFormat df = new DecimalFormat("#.#######");
 
     @Override
@@ -79,14 +81,11 @@ public class MainActivity extends AppCompatActivity {
         bMode = Base.Decimal;
         entryStr = "";
         dialog = new Dialog(MainActivity.this, R.style.Dialog);
+        superToggle = false;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         setSupportActionBar(binding.appBarMain.toolbar);
-
-        //hList = findViewById(R.id.historyList);
-        //hItem = findViewById(R.id.historyItem);
 
         display = findViewById(R.id.input);
         enforceNotationButtons();
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
                     popup(4);
                 }
                 //This is for maintaining the behavior of the Navigation view
-                NavigationUI.onNavDestinationSelected(menuItem,navController);
+                //NavigationUI.onNavDestinationSelected(menuItem,navController);
                 //This is for closing the drawer after acting on it
                 drawer.closeDrawer(GravityCompat.START);
                 return true;
@@ -434,9 +433,14 @@ public class MainActivity extends AppCompatActivity {
     private String getCleanedCalc(String calc){
         ArrayList<String> entryStack = new ArrayList( Arrays.asList(calc.trim().split("\\s+")));
         String str;
-        entryStack.replaceAll(s-> s.replace("AND", "&"));
-        entryStack.replaceAll(s-> s.replace("OR", "|"));
         entryStack.replaceAll(s-> s.replace("NOT", "~"));
+        entryStack.replaceAll(s-> s.replace("NAND", "~&"));
+        entryStack.replaceAll(s-> s.replace("AND", "&"));
+        entryStack.replaceAll(s-> s.replace("XOR", "(+)"));
+        entryStack.replaceAll(s-> s.replace("XNOR", "~(+)"));
+        entryStack.replaceAll(s-> s.replace("NOR", "~|"));
+        entryStack.replaceAll(s-> s.replace("OR", "|"));
+
         for (int i = 0; i < entryStack.size(); i++) {
             str = entryStack.get(i);
             if (str.matches(".*[1234567890ABCDEF].*")) {
@@ -583,9 +587,13 @@ public class MainActivity extends AppCompatActivity {
         entryStr += ".";
         display.setText(entryStr);
     }
-    public void piBTN(View view){
+    public void constBTN(View view){
         alphaNumUpdate();
-        entryStr += "π";
+        if (superToggle) {
+            entryStr += "e";
+        } else {
+            entryStr += "π";
+        }
         display.setText(entryStr);
     }
 
@@ -624,6 +632,61 @@ public class MainActivity extends AppCompatActivity {
         operatorUpdate();
         entryStr += "%";
         display.setText(entryStr);
+    }
+
+    public void notBTN(View view){
+        operatorUpdate();
+        entryStr += "NOT";
+        display.setText(entryStr);
+    }
+    public void andBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "NAND";
+        } else {
+            entryStr += "AND";
+        }
+        display.setText(entryStr);
+    }
+    public void orBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "NOR";
+        } else {
+            entryStr += "OR";
+        }
+        display.setText(entryStr);
+    }
+    public void xorBTN(View view){
+        operatorUpdate();
+        if (superToggle) {
+            entryStr += "XNOR";
+        } else {
+            entryStr += "XOR";
+        }
+        display.setText(entryStr);
+    }
+
+    public void superBTN(View view){
+        superToggle = !superToggle;
+        Button bSuper = findViewById(R.id.superBTN);
+        Button bConst = findViewById(R.id.constBTN);
+        Button bAND = findViewById(R.id.andBTN);
+        Button bOR = findViewById(R.id.orBTN);
+        Button bXOR = findViewById(R.id.xorBTN);
+        if (superToggle) {
+            bSuper.setBackgroundResource(R.drawable.buttontoggleenabled);
+            bConst.setText(R.string.eConst);
+            bAND.setText(R.string.nand);
+            bOR.setText(R.string.nor);
+            bXOR.setText(R.string.xnor);
+        } else {
+            bSuper.setBackgroundResource(R.drawable.buttontoggledisabled);
+            bConst.setText(R.string.pi);
+            bAND.setText(R.string.and);
+            bOR.setText(R.string.or);
+            bXOR.setText(R.string.xor);
+        }
     }
 
     public void parBTN(View view){
@@ -670,16 +733,16 @@ public class MainActivity extends AppCompatActivity {
 
         switch (bMode) {
             case Binary:
-                entryStr = Integer.toString(Integer.parseInt(str, 2), 10);
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 2);
                 break;
             case Octal:
-                entryStr = Integer.toString(Integer.parseInt(str, 8), 10);
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 8);
                 break;
             case Duodecimal:
-                entryStr = Integer.toString(Integer.parseInt(str, 12), 10);
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 12);
                 break;
             case Hexadecimal:
-                entryStr = Integer.toString(Integer.parseInt(str, 16), 10);
+                entryStr = Integer.toString(Integer.parseInt(str, 10), 16);
                 break;
             default:
                 entryStr = str;

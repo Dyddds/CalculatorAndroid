@@ -10,7 +10,11 @@
 
     <color name="dim_dark_blue">#263238</color>
     <color name="dim_grey">#787F82</color>
+    <color name="dim_light_blue">#3B4E57</color>
+    <color name="dim_orange">#e59400</color>
 
     <color name="enabled">@color/dim_dark_blue</color>
     <color name="disabled">@color/dim_grey</color>
+    <color name="toggle_enabled">@color/dim_orange</color>
+    <color name="toggle_disabled">@color/dim_light_blue</color>
 </resources>

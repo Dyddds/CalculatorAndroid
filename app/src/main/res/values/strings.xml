@@ -14,7 +14,7 @@
     <string name="menu_history">History</string>
     <string name="menu_theme">Theme</string>
 
-    <!-- Button Titles -->
+    <!-- Operand Buttons -->
     <string name='zero'>0</string>
     <string name='one'>1</string>
     <string name='two'>2</string>
@@ -31,9 +31,13 @@
     <string name='d'>d</string>
     <string name='e'>e</string>
     <string name='f'>f</string>
+    <string name='point'>.</string>
 
+    <!-- Constants -->
+    <string name='pi'>π</string>
+    <string name='eConst'>e</string>
 
-    <string name='clear'>Clr</string>
+    <!-- Regular Operators -->
     <string name='exponent'>^</string>
     <string name='parentheses'>( )</string>
     <string name='modulo'>%</string>
@@ -42,13 +46,23 @@
     <string name='add'>+</string>
     <string name='subtract'>-</string>
     <string name='squareroot'>√</string>
-    <string name='pi'>π</string>
-    <string name='plusMinus'>+\-</string>
-    <string name='point'>.</string>
-    <string name='equals'>=</string>
 
+    <!-- Boolean Operators -->
+    <string name='not'>NOT</string>
+    <string name='and'>AND</string>
+    <string name='or'>OR</string>
+    <string name='xor'>XOR</string>
+    <string name='nand'>NAND</string>
+    <string name='nor'>NOR</string>
+    <string name='xnor'>XNOR</string>
+
+    <!-- Display Manipulator -->
+    <string name='equals'>=</string>
+    <string name='clear'>Clr</string>
     <string name='backspace'>Backspace</string>
     <string name='spacebar'>⎵</string>
+
+    <string name='superT'>︽</string>
 
     <string name='display'>Enter in a value</string>
 </resources>
