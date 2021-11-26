@@ -10,8 +10,8 @@
     android:singleLine="true"
     android:scrollHorizontally="true"
     android:gravity="end"
-    android:textAlignment="gravity"/>
-<!--android:onClick="enterHistoryItem"-->
+    android:textAlignment="gravity"
+    android:onClick="historyItemBTN" />
 
 
 

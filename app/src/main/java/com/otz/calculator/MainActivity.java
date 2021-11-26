@@ -63,16 +63,12 @@ public class MainActivity extends AppCompatActivity {
     Notation nMode;
     Base bMode;
 
-    //private ScrollView hList;
-    //private TextView hItem;
-    //View v;
-    //ViewGroup insertPoint;
-
     private EditText display;
     private String entryStr;
+    private Dialog dialog;
+    PopupWindow popupWindow;
+
     ArrayList<String> history = new ArrayList<String>();
-
-
     private boolean isResult = false;
     DecimalFormat df = new DecimalFormat("#.#######");
 
@@ -82,6 +78,7 @@ public class MainActivity extends AppCompatActivity {
         nMode = Notation.Infix;
         bMode = Base.Decimal;
         entryStr = "";
+        dialog = new Dialog(MainActivity.this, R.style.Dialog);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
@@ -139,21 +136,6 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    /*@Override
-    public void onRestart() {
-        super.onRestart();
-        entryStr = "";
-        enforceNotationButtons();
-        enforceBaseButtons();
-    }*/
-
-    /*@Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }*/
-
     @Override
     public boolean onSupportNavigateUp() {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
@@ -162,19 +144,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void historyDialog() {
-        //String[] name = {"cake", "jame", "tom"};
-        Dialog dialog = new Dialog(MainActivity.this, R.style.Dialog);
+        dialog.show();;
         dialog.setContentView(R.layout.popup_history);
         ListView list = dialog.findViewById(R.id.historyList);
         dialog.setTitle("History");
         dialog.setCancelable(true);
         ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,history);
         list.setAdapter(adapter);
-        dialog.show();
     }
     public void popup(int id) {
-        // inflate the layout of the popup window
-
         LayoutInflater inflater = (LayoutInflater)
                 getSystemService(LAYOUT_INFLATER_SERVICE);
         View popupView;
@@ -193,35 +171,13 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
 
-
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-        /*if (id == 3) {
-            //width = getResources().getConfiguration().screenWidthDp - 20;
-            width = (int) ((getResources().getConfiguration().screenWidthDp - 20) * Resources.getSystem().getDisplayMetrics().density);
-        }*/
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         boolean focusable = true; // lets taps outside the popup also dismiss it
-        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-        // show the popup window
-        // which view you pass in doesn't matter, it is only used for the window tolken
+        popupWindow = new PopupWindow(popupView, width, height, focusable);
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
-        /*if (id == 3) {
-            ArrayAdapter adapter = new ArrayAdapter<String>(getApplicationContext(), R.layout.history_item, name);
-            ListView listView = findViewById(R.id.historyList);
-            listView.setAdapter(adapter);
-        }*/
-
-        // dismiss the popup window when touched
-        popupView.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                popupWindow.dismiss();
-                return true;
-            }
-        });
     }
 
     public void changeNotation(View v) {
@@ -241,8 +197,8 @@ public class MainActivity extends AppCompatActivity {
         }
         entryStr = "";
         display.setText(entryStr);
+        popupWindow.dismiss();
     }
-
     public void changeBase(View v) {
         switch (v.getId()) {
             case (R.id.Bin):
@@ -268,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
         }
         entryStr = "";
         display.setText(entryStr);
+        popupWindow.dismiss();
     }
 
     private void enforceNotationButtons(){
@@ -423,17 +380,17 @@ public class MainActivity extends AppCompatActivity {
         bF.setBackgroundResource(R.drawable.buttondisabled);
     }
 
-    private void addToHistory(String item) {
+    public void historyItemBTN(View view) {
+        TextView hI = (TextView) view;
+        String str = hI.getText().toString();
+        dialog.dismiss();
 
-        /*LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        v = vi.inflate(R.layout.history_item, null);
-
-        TextView textView = v.findViewById(R.id.historyItem);
-        textView.setText(item);
-
-        //ViewGroup insertPoint = findViewById(R.id.drawer_layout);
-        insertPoint = findViewById(R.id.historyList);
-        insertPoint.addView(v);*/
+        if (str.matches(".*[=].*")) {
+            entryStr = str.replaceAll("[= ]", "");
+        } else {
+            entryStr = str;
+        }
+        display.setText(entryStr);
     }
 
     private String prefixToInfix(ArrayList<String> preStack){
@@ -704,14 +661,13 @@ public class MainActivity extends AppCompatActivity {
     public void equalBTN(View view){
         operatorUpdate();
         history.add(entryStr);
-        //addToHistory(entryStr);
         String calcStr = getCleanedCalc(entryStr);
 
         Expression e = new Expression(calcStr);
         display.setText("");
         double r = e.calculate();
         String str = df.format(r);
-        //String str = Double.toString(r);
+
         switch (bMode) {
             case Binary:
                 entryStr = Integer.toString(Integer.parseInt(str, 2), 10);
@@ -731,15 +687,7 @@ public class MainActivity extends AppCompatActivity {
 
         display.setText(entryStr);
         history.add("= " + entryStr + " ");
-        //addToHistory("= " + entryStr);
 
-        /*if ((r % 1) == 0) {
-            entryStr = String.valueOf((long) r);
-            display.setText(entryStr);
-        } else {
-            entryStr = String.valueOf(r);
-            display.setText(entryStr);
-        }*/
         isResult = true;
     }
 
