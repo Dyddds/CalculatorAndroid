@@ -116,7 +116,6 @@ public class MainActivity extends AppCompatActivity {
                 int id = menuItem.getItemId();
                 //it's possible to do more actions on several items, if there is a large amount of items I prefer switch(){case} instead of if()
                 if (id == R.id.nav_notation){
-                    //Toast.makeText(getApplicationContext(), "Home", Toast.LENGTH_SHORT).show();
                     popup(1);
                 } else if (id == R.id.nav_base){
                     popup(2);
@@ -476,7 +475,7 @@ public class MainActivity extends AppCompatActivity {
     //Clears entry if the entry is showing result
     public void showingResult(){
         if (isResult) {
-            entryStr += "";
+            entryStr += " ";
             display.setText(entryStr);
             isResult = false;
         }
@@ -484,10 +483,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void alphaNumUpdate(){
         if (isResult) {
-            entryStr += "";
+            entryStr += " ";
             display.setText(entryStr);
             isResult = false;
-        } else if (!entryStr.equals("") && entryStr.matches(".*[-+/*√)^%]")) {
+        } else if (!entryStr.equals("") && (entryStr.matches(".*[-+/*√)^%]")
+                || (entryStr.endsWith("NAND") || entryStr.endsWith("XNOR") || entryStr.endsWith("NaN")
+                || entryStr.endsWith("AND") || entryStr.endsWith("NOR") || entryStr.endsWith("XOR")
+                || entryStr.endsWith("NOT") || entryStr.endsWith("OR")))) {
             entryStr += " ";
             display.setText(entryStr);
         }
@@ -758,7 +760,15 @@ public class MainActivity extends AppCompatActivity {
         showingResult();
 
         if (!entryStr.equals("")){
-            entryStr = entryStr.substring(0, entryStr.length() - 1);
+            if (entryStr.endsWith("NAND") || entryStr.endsWith("XNOR")) {
+                entryStr = entryStr.substring(0, entryStr.length() - 4);
+            } else if (entryStr.endsWith("NaN") || entryStr.endsWith("AND") || entryStr.endsWith("NOR") || entryStr.endsWith("XOR") || entryStr.endsWith("NOT")) {
+                entryStr = entryStr.substring(0, entryStr.length() - 3);
+            } else if (entryStr.endsWith("OR")) {
+                entryStr = entryStr.substring(0, entryStr.length() - 2);
+            } else {
+                entryStr = entryStr.substring(0, entryStr.length() - 1);
+            }
             display.setText(entryStr);
         }
     }
