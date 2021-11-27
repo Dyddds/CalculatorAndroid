@@ -7,6 +7,7 @@
     android:layout_height="wrap_content"
     android:text="Empty Space"
     android:textSize="24sp"
+    android:textColor="@color/black"
     android:singleLine="true"
     android:scrollHorizontally="true"
     android:gravity="end"

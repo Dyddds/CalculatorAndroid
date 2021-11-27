@@ -20,6 +20,7 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
@@ -45,9 +46,9 @@ import java.util.Arrays;
 //TODO Auto scroll screen to right most side
 //TODO Reorganize clear screen and update screen
 //TODO Separate into different classes
-//TODO loading history on different bases or notations
+//TODO Make Dialog wider
 //TODO Fix XNOR
-//TODO Fix Delete with Boolean Operators
+//TODO Fix after-result display manipulation
 
 public class MainActivity extends AppCompatActivity {
 
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private Dialog dialog;
     private PopupWindow popupWindow;
 
-    ArrayList<String> history = new ArrayList<String>();
+    ArrayList<String> expHistory = new ArrayList<String>();
     private boolean isResult = false;
     private boolean superToggle;
     DecimalFormat df = new DecimalFormat("#.#######");
@@ -80,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         nMode = Notation.Infix;
         bMode = Base.Decimal;
         entryStr = "";
-        dialog = new Dialog(MainActivity.this, R.style.Dialog);
+        dialog = new Dialog(MainActivity.this); //, R.style.Dialog
         superToggle = false;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -144,11 +145,11 @@ public class MainActivity extends AppCompatActivity {
     public void historyDialog() {
         dialog.show();;
         dialog.setContentView(R.layout.popup_history);
-        ListView list = dialog.findViewById(R.id.historyList);
-        dialog.setTitle("History");
+        ListView hList = dialog.findViewById(R.id.historyList);
+        //dialog.setTitle("History :: Base");
         dialog.setCancelable(true);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,history);
-        list.setAdapter(adapter);
+        ArrayAdapter<String> hAdapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,expHistory);
+        hList.setAdapter(hAdapter);
     }
     public void popup(int id) {
         LayoutInflater inflater = (LayoutInflater)
@@ -380,8 +381,38 @@ public class MainActivity extends AppCompatActivity {
 
     public void historyItemBTN(View view) {
         TextView hI = (TextView) view;
-        String str = hI.getText().toString();
+        String expression = hI.getText().toString();
         dialog.dismiss();
+
+        int posStart = expression.indexOf('[');
+        int posEnd = expression.indexOf(']');
+        String str = expression.substring(0, posStart);
+        String base = expression.substring(posStart+1, posEnd);
+        Base baseM;
+
+        switch (base) {
+            case "2":
+                baseM = Base.Binary;
+                break;
+            case "8":
+                baseM = Base.Octal;
+                break;
+            case "12":
+                baseM = Base.Duodecimal;
+                break;
+            case "16":
+                baseM = Base.Hexadecimal;
+                break;
+            default:
+                baseM = Base.Decimal;
+        }
+        if (bMode!=baseM){
+            bMode = baseM;
+            enforceBaseButtons();
+            String tMessage  = "Base was changed to " + base;
+            Toast.makeText(MainActivity.this, tMessage,
+                    Toast.LENGTH_SHORT).show();
+        }
 
         if (str.matches(".*[=].*")) {
             entryStr = str.replaceAll("[= ]", "");
@@ -725,7 +756,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void equalBTN(View view){
         operatorUpdate();
-        history.add(entryStr);
+        //expHistory.add(entryStr);
         String calcStr = getCleanedCalc(entryStr);
 
         Expression e = new Expression(calcStr);
@@ -735,23 +766,33 @@ public class MainActivity extends AppCompatActivity {
 
         switch (bMode) {
             case Binary:
+                expHistory.add(entryStr + "[2] ");
                 entryStr = Integer.toString(Integer.parseInt(str, 10), 2);
+                expHistory.add("= " + entryStr + " [2] ");
                 break;
             case Octal:
+                expHistory.add(entryStr + "[8] ");
                 entryStr = Integer.toString(Integer.parseInt(str, 10), 8);
+                expHistory.add("= " + entryStr + " [8] ");
                 break;
             case Duodecimal:
-                entryStr = Integer.toString(Integer.parseInt(str, 10), 12);
+                expHistory.add(entryStr + "[12] ");
+                entryStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase();
+                expHistory.add("= " + entryStr + " [12] ");
                 break;
             case Hexadecimal:
-                entryStr = Integer.toString(Integer.parseInt(str, 10), 16);
+                expHistory.add(entryStr + "[16] ");
+                entryStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase();
+                expHistory.add("= " + entryStr + " [16] ");
                 break;
             default:
+                expHistory.add(entryStr + "[10] ");
                 entryStr = str;
+                expHistory.add("= " + entryStr + " [10] ");
         }
 
         display.setText(entryStr);
-        history.add("= " + entryStr + " ");
+        //expHistory.add("= " + entryStr + " ");
 
         isResult = true;
     }
