@@ -49,7 +49,8 @@ import java.util.Arrays;
 //TODO Make Dialog wider
 //TODO Fix XNOR
 //TODO Fix after-result display manipulation
-//TODO Fix Boolean for Postfix and Prefix
+
+//NOTE Sometimes postfix and prefix will return answer even if expression is invalid
 
 public class MainActivity extends AppCompatActivity {
 
@@ -453,12 +454,14 @@ public class MainActivity extends AppCompatActivity {
         ArrayList<String> infixStack = new ArrayList<String>();
         for (int i = preStack.size()-1; i >= 0 ; i--) {
             String str = preStack.get(i);
-            if (str.matches(".*[-+/*^%]") && i < preStack.size()-2) {
+            if ((str.matches(".*[-+/*^%]") || str.equals("~&") || str.equals("~(+)")
+                    || str.equals("&") || str.equals("~|") || str.equals("(+)")
+                    || str.equals("|")) && i < preStack.size()-2) {
                 String exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
-            } else if (str.matches("sqrt") && i < preStack.size()-1) {
+            } else if ((str.matches("sqrt") || str.equals("~")) && i < preStack.size()-1) {
                 String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
@@ -469,15 +472,17 @@ public class MainActivity extends AppCompatActivity {
         return String.join("", infixStack);
     }
     private String postfixToInfix(ArrayList<String> postStack){
-        ArrayList<String> infixStack = new ArrayList<String>();
+        ArrayList<String> infixStack = new ArrayList<>();
         for (int i = 0; i < postStack.size(); i++) {
             String str = postStack.get(i);
-            if (str.matches(".*[-+/*^%]") && postStack.size() > 2) {
+            if ((str.matches(".*[-+/*^%]") || str.equals("~&") || str.equals("~(+)")
+                    || str.equals("&") || str.equals("~|") || str.equals("(+)")
+                    || str.equals("|")) && postStack.size() > 2 && i > 1) {
                 String exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
-            } else if (str.matches("sqrt") && postStack.size() > 1) {
+            } else if ((str.matches("sqrt") || str.equals("~")) && postStack.size() > 1) {
                 String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
@@ -488,7 +493,7 @@ public class MainActivity extends AppCompatActivity {
         return String.join("", infixStack);
     }
     private String getCleanedCalc(String calc){
-        ArrayList<String> entryStack = new ArrayList( Arrays.asList(calc.trim().split("\\s+")));
+        ArrayList<String> entryStack = new ArrayList<>( Arrays.asList(calc.trim().split("\\s+")));
         String str;
         entryStack.replaceAll(s-> s.replace("NOT", "~"));
         entryStack.replaceAll(s-> s.replace("NAND", "~&"));
@@ -544,10 +549,10 @@ public class MainActivity extends AppCompatActivity {
             entryStr += " ";
             display.setText(entryStr);
             isResult = false;
-        } else if (!entryStr.equals("") && (entryStr.matches(".*[-+/*√)^%]")
-                || (entryStr.endsWith("NAND") || entryStr.endsWith("XNOR") || entryStr.endsWith("NaN")
+        } else if (!entryStr.equals("") && (entryStr.matches(".*[-+/*√)(^%]")
+                || entryStr.endsWith("NAND") || entryStr.endsWith("XNOR") || entryStr.endsWith("NaN")
                 || entryStr.endsWith("AND") || entryStr.endsWith("NOR") || entryStr.endsWith("XOR")
-                || entryStr.endsWith("NOT") || entryStr.endsWith("OR")))) {
+                || entryStr.endsWith("NOT") || entryStr.endsWith("OR"))) {
             entryStr += " ";
             display.setText(entryStr);
         }
