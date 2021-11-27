@@ -49,6 +49,7 @@ import java.util.Arrays;
 //TODO Make Dialog wider
 //TODO Fix XNOR
 //TODO Fix after-result display manipulation
+//TODO Add icons to drawer
 
 public class MainActivity extends AppCompatActivity {
 
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     enum Base {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
+
 
     Notation nMode;
     Base bMode;
@@ -111,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setItemIconTintList(null);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
