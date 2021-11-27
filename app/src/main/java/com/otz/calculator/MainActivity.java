@@ -49,7 +49,7 @@ import java.util.Arrays;
 //TODO Make Dialog wider
 //TODO Fix XNOR
 //TODO Fix after-result display manipulation
-//TODO Add icons to drawer
+//TODO Fix Boolean for Postfix and Prefix
 
 public class MainActivity extends AppCompatActivity {
 
@@ -62,7 +62,6 @@ public class MainActivity extends AppCompatActivity {
     enum Base {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
-
 
     Notation nMode;
     Base bMode;
@@ -124,7 +123,6 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.nav_base){
                     popup(2);
                 } else if (id == R.id.nav_history){
-                    //popup(3);
                     historyDialog();
                 } else if (id == R.id.nav_theme){
                     popup(4);
@@ -149,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
         dialog.show();;
         dialog.setContentView(R.layout.popup_history);
         ListView hList = dialog.findViewById(R.id.historyList);
-        //dialog.setTitle("History :: Base");
         dialog.setCancelable(true);
         ArrayAdapter<String> hAdapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,expHistory);
         hList.setAdapter(hAdapter);
@@ -391,8 +388,8 @@ public class MainActivity extends AppCompatActivity {
         int posEnd = expression.indexOf(']');
         String str = expression.substring(0, posStart);
         String base = expression.substring(posStart+1, posEnd);
+        String tMessage = "";
         Base baseM;
-
         switch (base) {
             case "2":
                 baseM = Base.Binary;
@@ -412,7 +409,34 @@ public class MainActivity extends AppCompatActivity {
         if (bMode!=baseM){
             bMode = baseM;
             enforceBaseButtons();
-            String tMessage  = "Base was changed to " + base;
+            tMessage += "Base was changed to " + base;
+        }
+
+        posStart = expression.lastIndexOf('[');
+        posEnd = expression.lastIndexOf(']');
+        String note = expression.substring(posStart+1, posEnd);
+
+        Notation noteM;
+        switch (note) {
+            case "Pr":
+                noteM = Notation.Prefix;
+                note = "Prefix";
+                break;
+            case "Po":
+                noteM = Notation.Postfix;
+                note = "Postfix";
+                break;
+            default:
+                noteM = Notation.Infix;
+                note = "Infix";
+        }
+        if (nMode!=noteM){
+            nMode = noteM;
+            enforceNotationButtons();
+            tMessage += "\nNotation was changed to " + note;
+        }
+
+        if (!tMessage.equals("")){
             Toast.makeText(MainActivity.this, tMessage,
                     Toast.LENGTH_SHORT).show();
         }
@@ -766,37 +790,46 @@ public class MainActivity extends AppCompatActivity {
         display.setText("");
         double r = e.calculate();
         String str = df.format(r);
+        String note;
+        switch (nMode) {
+            case Prefix:
+                note = "[Pr]";
+                break;
+            case Postfix:
+                note = "[Po]";
+                break;
+            default:
+                note = "[In]";
+        }
 
         switch (bMode) {
             case Binary:
-                expHistory.add(entryStr + "[2] ");
+                expHistory.add(entryStr + "[2] " + note);
                 entryStr = Integer.toString(Integer.parseInt(str, 10), 2);
-                expHistory.add("= " + entryStr + " [2] ");
+                expHistory.add("= " + entryStr + " [2] " + note);
                 break;
             case Octal:
-                expHistory.add(entryStr + "[8] ");
+                expHistory.add(entryStr + "[8] " + note);
                 entryStr = Integer.toString(Integer.parseInt(str, 10), 8);
-                expHistory.add("= " + entryStr + " [8] ");
+                expHistory.add("= " + entryStr + " [8] " + note);
                 break;
             case Duodecimal:
-                expHistory.add(entryStr + "[12] ");
+                expHistory.add(entryStr + "[12] " + note);
                 entryStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase();
-                expHistory.add("= " + entryStr + " [12] ");
+                expHistory.add("= " + entryStr + " [12] " + note);
                 break;
             case Hexadecimal:
-                expHistory.add(entryStr + "[16] ");
+                expHistory.add(entryStr + "[16] " + note);
                 entryStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase();
-                expHistory.add("= " + entryStr + " [16] ");
+                expHistory.add("= " + entryStr + " [16] " + note);
                 break;
             default:
-                expHistory.add(entryStr + "[10] ");
+                expHistory.add(entryStr + "[10] " + note);
                 entryStr = str;
-                expHistory.add("= " + entryStr + " [10] ");
+                expHistory.add("= " + entryStr + " [10] " + note);
         }
 
         display.setText(entryStr);
-        //expHistory.add("= " + entryStr + " ");
-
         isResult = true;
     }
 
