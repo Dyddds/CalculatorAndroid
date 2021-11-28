@@ -18,55 +18,60 @@
         android:background="#eeeeee"/>
 
     <Button
+        android:id="@+id/BtnLight"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncBinary"
+        android:onClick="changeTheme"
         android:text="Light"
         android:textSize="24sp" />
 
     <Button
+        android:id="@+id/BtnDark"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncOctal"
+        android:onClick="changeTheme"
         android:text="Dark"
         android:textSize="24sp" />
 
     <Button
+        android:id="@+id/BtnFlower"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncDecimal"
+        android:onClick="changeTheme"
         android:text="Flower"
         android:textSize="24sp" />
     <Button
+        android:id="@+id/BtnSpace"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncDuodecimal"
+        android:onClick="changeTheme"
         android:text="Space"
         android:textSize="24sp" />
     <Button
+        android:id="@+id/BtnWooden"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:layout_marginTop="-5dp"
         android:layout_weight="1"
-        android:onClick="ncHexadecimal"
+        android:onClick="changeTheme"
         android:text="Wooden"
         android:textSize="24sp" />
 

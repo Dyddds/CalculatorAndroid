@@ -25,6 +25,7 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -64,8 +65,12 @@ public class MainActivity extends AppCompatActivity {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
 
+    enum Theme {
+        Light, Dark, Space, Flower, Wooden
+    }
     Notation nMode;
     Base bMode;
+    Theme tMode;
 
     private EditText display;
     private String entryStr;
@@ -82,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         nMode = Notation.Infix;
         bMode = Base.Decimal;
+        tMode = Theme.Light;
         entryStr = "";
         dialog = new Dialog(MainActivity.this); //, R.style.Dialog
         superToggle = false;
@@ -93,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
         display = findViewById(R.id.input);
         enforceNotationButtons();
         enforceBaseButtons();
+
         display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -199,6 +206,35 @@ public class MainActivity extends AppCompatActivity {
         display.setText(entryStr);
         popupWindow.dismiss();
     }
+
+    public void changeTheme(View v) {
+        switch (v.getId()) {
+            case (R.id.BtnLight):
+                tMode = Theme.Light;
+                enforceThemeButtons();
+                break;
+            case (R.id.BtnDark):
+                tMode = Theme.Dark;
+                enforceThemeButtons();
+                break;
+            case (R.id.BtnSpace):
+                tMode = Theme.Space;
+                enforceThemeButtons();
+                break;
+            case (R.id.BtnFlower):
+                tMode = Theme.Flower;
+                enforceThemeButtons();
+                break;
+            case (R.id.BtnWooden):
+                tMode = Theme.Wooden;
+                enforceThemeButtons();
+                break;
+        }
+        entryStr = "";
+        display.setText(entryStr);
+        popupWindow.dismiss();
+    }
+
     public void changeBase(View v) {
         switch (v.getId()) {
             case (R.id.Bin):
@@ -237,6 +273,18 @@ public class MainActivity extends AppCompatActivity {
             paran.setBackgroundResource(R.drawable.buttondisabled);
         }
     }
+
+    private void enforceThemeButtons(){
+        int currenttheme = 0;
+        if (tMode == Theme.Light) {
+            currenttheme = AppCompatDelegate.MODE_NIGHT_NO;
+
+        } else if (tMode == Theme.Dark) {
+            currenttheme = AppCompatDelegate.MODE_NIGHT_YES;
+        }
+        AppCompatDelegate.setDefaultNightMode(currenttheme);
+    }
+
     private void enforceBaseButtons(){
         switch (bMode){
             case Binary:
@@ -536,6 +584,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Clears entry if the entry is showing result
+
     public void showingResult(){
         if (isResult) {
             entryStr += " ";
