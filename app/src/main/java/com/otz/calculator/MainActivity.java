@@ -43,6 +43,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import kotlin.text.Regex;
+
 //TODO Add Cursor on result screen
 //TODO Auto scroll screen to right most side
 //TODO Reorganize clear screen and update screen
@@ -206,7 +208,6 @@ public class MainActivity extends AppCompatActivity {
         display.setText(entryStr);
         popupWindow.dismiss();
     }
-
     public void changeTheme(View v) {
         switch (v.getId()) {
             case (R.id.BtnLight):
@@ -230,11 +231,8 @@ public class MainActivity extends AppCompatActivity {
                 enforceThemeButtons();
                 break;
         }
-        entryStr = "";
-        display.setText(entryStr);
         popupWindow.dismiss();
     }
-
     public void changeBase(View v) {
         switch (v.getId()) {
             case (R.id.Bin):
@@ -264,13 +262,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void enforceNotationButtons(){
-        Button paran = findViewById(R.id.parenthesesBTN);
+        Button paren = findViewById(R.id.parenthesesBTN);
         if (nMode == Notation.Infix) {
-            paran.setEnabled(true);
-            paran.setBackgroundResource(R.drawable.buttonenabled);
+            paren.setEnabled(true);
+            paren.setBackgroundResource(R.drawable.buttonenabled);
         } else {
-            paran.setEnabled(false);
-            paran.setBackgroundResource(R.drawable.buttondisabled);
+            paren.setEnabled(false);
+            paren.setBackgroundResource(R.drawable.buttondisabled);
         }
     }
 
@@ -500,17 +498,22 @@ public class MainActivity extends AppCompatActivity {
 
     private String prefixToInfix(ArrayList<String> preStack){
         ArrayList<String> infixStack = new ArrayList<String>();
+        String str, exp;
         for (int i = preStack.size()-1; i >= 0 ; i--) {
-            String str = preStack.get(i);
-            if ((str.matches(".*[-+/*^%]") || str.equals("~&") || str.equals("~(+)")
-                    || str.equals("&") || str.equals("~|") || str.equals("(+)")
-                    || str.equals("|")) && i < preStack.size()-2) {
-                String exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
+            str = preStack.get(i);
+            if ((str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
+                    || str.equals("(+)")) && i < preStack.size()-2) {
+                exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
             } else if ((str.matches("sqrt") || str.equals("~")) && i < preStack.size()-1) {
-                String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
+                exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else if (str.equals("~(+)")) {
+                exp = "(~(" + infixStack.get(infixStack.size()-1) + "(+)" + infixStack.get(infixStack.size()-2) + "))";
+                infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
             } else {
@@ -521,22 +524,82 @@ public class MainActivity extends AppCompatActivity {
     }
     private String postfixToInfix(ArrayList<String> postStack){
         ArrayList<String> infixStack = new ArrayList<>();
+        String str, exp;
         for (int i = 0; i < postStack.size(); i++) {
-            String str = postStack.get(i);
-            if ((str.matches(".*[-+/*^%]") || str.equals("~&") || str.equals("~(+)")
-                    || str.equals("&") || str.equals("~|") || str.equals("(+)")
-                    || str.equals("|")) && postStack.size() > 2 && i > 1) {
-                String exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
+            str = postStack.get(i);
+            if ((str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
+                    || str.equals("(+)")) && postStack.size() > 2 && i > 1) {
+                exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
-            } else if ((str.matches("sqrt") || str.equals("~")) && postStack.size() > 1) {
-                String exp = "(" + str + "(" + infixStack.get(infixStack.size()-1) + "))";
+            } else if ((str.equals("sqrt") || str.equals("~")) && postStack.size() > 1) {
+                exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
+                infixStack.remove(infixStack.size() - 1);
+                infixStack.add(exp);
+            } else if(str.equals("~(+)")) {
+                exp = "(~(" + infixStack.get(infixStack.size()-2) + "(+)" + infixStack.get(infixStack.size()-1) + "))";
+                infixStack.remove(infixStack.size() - 1);
                 infixStack.remove(infixStack.size() - 1);
                 infixStack.add(exp);
             } else {
                 infixStack.add(str);
             }
+        }
+        return String.join("", infixStack);
+    }
+    private String infixSetup (ArrayList<String> infixStack){
+        boolean finalizing;
+        int par, pos;
+        while (infixStack.contains("~(+)")) {
+            ArrayList<String> newStack = new ArrayList<>();
+            finalizing = false;
+            par = 0;
+            pos = -1;
+            for (int i = 0; i < infixStack.size(); i++) {
+                if (!finalizing) {
+                    if (!infixStack.get(i).equals("~(+)")) {
+                        newStack.add(infixStack.get(i));
+                    } else {
+                        pos = i;
+                        infixStack.set(i,"(+)");
+                        i--;
+                        while (newStack.size()>0) {
+                            if (newStack.get(newStack.size()-1).equals(")")) {
+                                par++;
+                            } else if (newStack.get(newStack.size()-1).equals("(")) {
+                                par--;
+                            }
+                            if (newStack.get(newStack.size()-1).matches("^[0-9A-F(]+$") && par < 1){
+                                newStack.remove(newStack.size() - 1);
+                                i--;
+                                newStack.add("(");
+                                newStack.add("~");
+                                newStack.add("(");
+                                finalizing = true;
+                                par = 0;
+                                break;
+                            }
+                            newStack.remove(newStack.size() - 1);
+                            i--;
+                        }
+                    }
+                } else {
+                    newStack.add(infixStack.get(i));
+                    if (newStack.get(newStack.size()-1).equals("(")) {
+                        par++;
+                    } else if (newStack.get(newStack.size()-1).equals(")")) {
+                        par--;
+                    }
+                    if (newStack.get(newStack.size()-1).matches("^[0-9A-F)]+$") && par < 1 && i > pos && pos != -1){
+                        newStack.add(")");
+                        newStack.add(")");
+                        pos = -1;
+                    }
+
+                }
+            }
+            infixStack = newStack;
         }
         return String.join("", infixStack);
     }
@@ -579,12 +642,11 @@ public class MainActivity extends AppCompatActivity {
             case Postfix:
                 return postfixToInfix(entryStack);
             default:
-                return String.join("", entryStack);
+                return infixSetup(entryStack);
         }
     }
 
     //Clears entry if the entry is showing result
-
     public void showingResult(){
         if (isResult) {
             entryStr += " ";
@@ -815,7 +877,12 @@ public class MainActivity extends AppCompatActivity {
             display.setText(entryStr);
         }
         else if ((closedPar < openPar) && !entryStr.matches(".*[(]")){
-            entryStr += ")";
+            if (entryStr.matches(".*[-+/*^%√]") || entryStr.endsWith("AND")
+                    || entryStr.endsWith("OR") || entryStr.endsWith("NOT") ) {
+                entryStr += " (";
+            } else {
+                entryStr += " )";
+            }
             display.setText(entryStr);
         }
         display.setSelection(cursorPos+1);
@@ -837,7 +904,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void equalBTN(View view){
         operatorUpdate();
-        //expHistory.add(entryStr);
         String calcStr = getCleanedCalc(entryStr);
 
         Expression e = new Expression(calcStr);
@@ -893,7 +959,8 @@ public class MainActivity extends AppCompatActivity {
         if (!entryStr.equals("")){
             if (entryStr.endsWith("NAND") || entryStr.endsWith("XNOR")) {
                 entryStr = entryStr.substring(0, entryStr.length() - 4);
-            } else if (entryStr.endsWith("NaN") || entryStr.endsWith("AND") || entryStr.endsWith("NOR") || entryStr.endsWith("XOR") || entryStr.endsWith("NOT")) {
+            } else if (entryStr.endsWith("NaN") || entryStr.endsWith("AND") || entryStr.endsWith("NOR")
+                    || entryStr.endsWith("XOR") || entryStr.endsWith("NOT")) {
                 entryStr = entryStr.substring(0, entryStr.length() - 3);
             } else if (entryStr.endsWith("OR")) {
                 entryStr = entryStr.substring(0, entryStr.length() - 2);
