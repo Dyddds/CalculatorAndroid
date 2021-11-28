@@ -568,6 +568,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:ellipsize="end"
         android:autofillHints="false"
         android:inputType="none"
         android:textSize="36sp"
@@ -575,7 +576,12 @@
         tools:ignore="LabelFor"
         android:focusable="false"
         android:focusableInTouchMode="false"
+        android:textIsSelectable="true"
         android:singleLine="true"
         android:scrollHorizontally="true"
         />
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!--
+        android:cursorVisible="true"
+        android:textCursorDrawable="@null"-->

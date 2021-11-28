@@ -1,24 +1,17 @@
 package com.otz.calculator;
 
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.Menu;
-import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -43,17 +36,11 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import kotlin.text.Regex;
-
-//TODO Add Cursor on result screen
-//TODO Auto scroll screen to right most side
-//TODO Reorganize clear screen and update screen
+//TODO (DROPPED) Add Cursor on result screen
 //TODO Separate into different classes
-//TODO Make Dialog wider
-//TODO Fix XNOR
-//TODO Fix after-result display manipulation
+//TODO Add item item on actionBar to show Notation
 
-//NOTE Sometimes postfix and prefix will return answer even if expression is invalid
+//NOTE Wrong expressions may still produce an answer
 
 public class MainActivity extends AppCompatActivity {
 
@@ -66,7 +53,6 @@ public class MainActivity extends AppCompatActivity {
     enum Base {
         Binary, Octal, Decimal, Duodecimal, Hexadecimal
     }
-
     enum Theme {
         Light, Dark, Space, Flower, Wooden
     }
@@ -75,12 +61,11 @@ public class MainActivity extends AppCompatActivity {
     Theme tMode;
 
     private EditText display;
-    private String entryStr;
     private Dialog dialog;
     private PopupWindow popupWindow;
 
-    ArrayList<String> expHistory = new ArrayList<String>();
-    private boolean isResult = false;
+    ArrayList<String> expHistory = new ArrayList<>();
+    private boolean isResult;
     private boolean superToggle;
     DecimalFormat df = new DecimalFormat("#.#######");
 
@@ -90,8 +75,9 @@ public class MainActivity extends AppCompatActivity {
         nMode = Notation.Infix;
         bMode = Base.Decimal;
         tMode = Theme.Light;
-        entryStr = "";
+
         dialog = new Dialog(MainActivity.this); //, R.style.Dialog
+        isResult = false;
         superToggle = false;
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
@@ -99,14 +85,16 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(binding.appBarMain.toolbar);
 
         display = findViewById(R.id.input);
+        display.setShowSoftInputOnFocus(false);
+        clearDisplay();
         enforceNotationButtons();
         enforceBaseButtons();
 
         display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(getString(R.string.display).equals(display.getText().toString())){
-                    display.setText("");
+                if(getString(R.string.display).equals(getDisplayText())){
+                    clearDisplay();
                 }
             }
         });
@@ -153,13 +141,33 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
+    private String getDisplayText(){
+        return display.getText().toString();
+    }
+    private void updateDisplay(String strToAdd){
+        String displayStr = display.getText().toString();
+        int cursorPos = display.getSelectionStart();
+        /*String leftStr = displayStr.substring(0,cursorPos);
+        String rightStr = displayStr.substring(cursorPos);
+        display.setText(R.string.display);
+        display.setText(String.format("%s%s%s", leftStr, strToAdd, rightStr));*/
+        display.setText(String.format("%s%s", displayStr, strToAdd));
+        display.setSelection(cursorPos+strToAdd.length());
+    }
+    private void clearDisplay() {
+        display.setText("");
+    }
+
     public void historyDialog() {
-        dialog.show();;
+        dialog.show();
         dialog.setContentView(R.layout.popup_history);
         ListView hList = dialog.findViewById(R.id.historyList);
         dialog.setCancelable(true);
-        ArrayAdapter<String> hAdapter = new ArrayAdapter<String> (MainActivity.this,R.layout.history_item,expHistory);
+        ArrayAdapter<String> hAdapter = new ArrayAdapter<> (MainActivity.this,R.layout.history_item,expHistory);
         hList.setAdapter(hAdapter);
+        int width = (int)(getResources().getDisplayMetrics().widthPixels);
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        dialog.getWindow().setLayout(width, height);
     }
     public void popup(int id) {
         LayoutInflater inflater = (LayoutInflater)
@@ -204,8 +212,7 @@ public class MainActivity extends AppCompatActivity {
                 enforceNotationButtons();
                 break;
         }
-        entryStr = "";
-        display.setText(entryStr);
+        clearDisplay();
         popupWindow.dismiss();
     }
     public void changeTheme(View v) {
@@ -256,8 +263,7 @@ public class MainActivity extends AppCompatActivity {
                 enforceBaseButtons();
                 break;
         }
-        entryStr = "";
-        display.setText(entryStr);
+        clearDisplay();
         popupWindow.dismiss();
     }
 
@@ -271,7 +277,6 @@ public class MainActivity extends AppCompatActivity {
             paren.setBackgroundResource(R.drawable.buttondisabled);
         }
     }
-
     private void enforceThemeButtons(){
         int currenttheme = 0;
         if (tMode == Theme.Light) {
@@ -282,7 +287,6 @@ public class MainActivity extends AppCompatActivity {
         }
         AppCompatDelegate.setDefaultNightMode(currenttheme);
     }
-
     private void enforceBaseButtons(){
         switch (bMode){
             case Binary:
@@ -429,6 +433,7 @@ public class MainActivity extends AppCompatActivity {
     public void historyItemBTN(View view) {
         TextView hI = (TextView) view;
         String expression = hI.getText().toString();
+        String displayStr;
         dialog.dismiss();
 
         int posStart = expression.indexOf('[');
@@ -480,7 +485,11 @@ public class MainActivity extends AppCompatActivity {
         if (nMode!=noteM){
             nMode = noteM;
             enforceNotationButtons();
-            tMessage += "\nNotation was changed to " + note;
+            if (tMessage.equals("")){
+                tMessage += "Notation was changed to " + note;
+            } else {
+                tMessage += "\nNotation was changed to " + note;
+            }
         }
 
         if (!tMessage.equals("")){
@@ -489,15 +498,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (str.matches(".*[=].*")) {
-            entryStr = str.replaceAll("[= ]", "");
+            displayStr = str.replaceAll("[= ]", "");
         } else {
-            entryStr = str;
+            displayStr = str;
         }
-        display.setText(entryStr);
+        clearDisplay();
+        updateDisplay(displayStr);
     }
 
     private String prefixToInfix(ArrayList<String> preStack){
-        ArrayList<String> infixStack = new ArrayList<String>();
+        ArrayList<String> infixStack = new ArrayList<>();
         String str, exp;
         for (int i = preStack.size()-1; i >= 0 ; i--) {
             str = preStack.get(i);
@@ -649,29 +659,26 @@ public class MainActivity extends AppCompatActivity {
     //Clears entry if the entry is showing result
     public void showingResult(){
         if (isResult) {
-            entryStr += " ";
-            display.setText(entryStr);
+            updateDisplay(" ");
             isResult = false;
         }
     }
 
     public void alphaNumUpdate(){
+        String displayStr = getDisplayText();
         if (isResult) {
-            entryStr += " ";
-            display.setText(entryStr);
+            clearDisplay();
             isResult = false;
-        } else if (!entryStr.equals("") && (entryStr.matches(".*[-+/*√)(^%]")
-                || entryStr.endsWith("NAND") || entryStr.endsWith("XNOR") || entryStr.endsWith("NaN")
-                || entryStr.endsWith("AND") || entryStr.endsWith("NOR") || entryStr.endsWith("XOR")
-                || entryStr.endsWith("NOT") || entryStr.endsWith("OR"))) {
-            entryStr += " ";
-            display.setText(entryStr);
+        } else if (!displayStr.equals("") && (displayStr.matches(".*[-+/*√)(^%]")
+                || displayStr.endsWith("NaN") || displayStr.endsWith("AND")
+                || displayStr.endsWith("NOT") || displayStr.endsWith("OR"))) {
+            updateDisplay(" ");
         }
     }
     public void operatorUpdate(){
-        if (!entryStr.equals("") && !entryStr.matches(".*[ ]")) {
-            entryStr += " ";
-            display.setText(entryStr);
+        String displayStr = getDisplayText();
+        if (!displayStr.equals("") && !displayStr.matches(".*[ ]")) {
+            updateDisplay(" ");
         }
         if (isResult) {
             isResult = false;
@@ -680,167 +687,138 @@ public class MainActivity extends AppCompatActivity {
 
     public void zeroBTN(View view){
         alphaNumUpdate();
-        entryStr += "0";
-        display.setText(entryStr);
+        updateDisplay("0");
     }
     public void oneBTN(View view){
         alphaNumUpdate();
-        entryStr += "1";
-        display.setText(entryStr);
+        updateDisplay("1");
     }
     public void twoBTN(View view){
         alphaNumUpdate();
-        entryStr += "2";
-        display.setText(entryStr);
+        updateDisplay("2");
     }
     public void threeBTN(View view){
         alphaNumUpdate();
-        entryStr += "3";
-        display.setText(entryStr);
+        updateDisplay("3");
     }
     public void fourBTN(View view){
         alphaNumUpdate();
-        entryStr += "4";
-        display.setText(entryStr);
+        updateDisplay("4");
     }
     public void fiveBTN(View view){
         alphaNumUpdate();
-        entryStr += "5";
-        display.setText(entryStr);
+        updateDisplay("5");
     }
     public void sixBTN(View view){
         alphaNumUpdate();
-        entryStr += "6";
-        display.setText(entryStr);
+        updateDisplay("6");
     }
     public void sevenBTN(View view){
         alphaNumUpdate();
-        entryStr += "7";
-        display.setText(entryStr);
+        updateDisplay("7");
     }
     public void eightBTN(View view){
         alphaNumUpdate();
-        entryStr += "8";
-        display.setText(entryStr);
+        updateDisplay("8");
     }
     public void nineBTN(View view){
         alphaNumUpdate();
-        entryStr += "9";
-        display.setText(entryStr);
+        updateDisplay("9");
     }
     public void aBTN(View view){
         alphaNumUpdate();
-        entryStr += "A";
-        display.setText(entryStr);
+        updateDisplay("A");
     }
     public void bBTN(View view){
         alphaNumUpdate();
-        entryStr += "B";
-        display.setText(entryStr);
+        updateDisplay("B");
     }
     public void cBTN(View view){
         alphaNumUpdate();
-        entryStr += "C";
-        display.setText(entryStr);
+        updateDisplay("C");
     }
     public void dBTN(View view){
         alphaNumUpdate();
-        entryStr += "D";
-        display.setText(entryStr);
+        updateDisplay("D");
     }
     public void eBTN(View view){
         alphaNumUpdate();
-        entryStr += "E";
-        display.setText(entryStr);
+        updateDisplay("E");
     }
     public void fBTN(View view){
         alphaNumUpdate();
-        entryStr += "F";
-        display.setText(entryStr);
+        updateDisplay("F");
     }
     public void decimalBTN(View view){
         alphaNumUpdate();
-        entryStr += ".";
-        display.setText(entryStr);
+        updateDisplay(".");
     }
     public void constBTN(View view){
         alphaNumUpdate();
         if (superToggle) {
-            entryStr += "e";
+            updateDisplay("e");
         } else {
-            entryStr += "π";
+            updateDisplay("π");
         }
-        display.setText(entryStr);
     }
 
     public void expBTN(View view){
         operatorUpdate();
-        entryStr += "^";
-        display.setText(entryStr);
+        updateDisplay("^");
     }
     public void squareRootBTN(View view){
         operatorUpdate();
-        entryStr += "√";
-        display.setText(entryStr);
+        updateDisplay("√");
     }
 
     public void multiplyBTN(View view){
         operatorUpdate();
-        entryStr += "*";
-        display.setText(entryStr);
+        updateDisplay("*");
     }
     public void divideBTN(View view){
         operatorUpdate();
-        entryStr += "/";
-        display.setText(entryStr);
+        updateDisplay("/");
     }
     public void addBTN(View view){
         operatorUpdate();
-        entryStr += "+";
-        display.setText(entryStr);
+        updateDisplay("+");
     }
     public void subtractBTN(View view){
         operatorUpdate();
-        entryStr += "-";
-        display.setText(entryStr);
+        updateDisplay("-");
     }
     public void moduloBTN(View view){
         operatorUpdate();
-        entryStr += "%";
-        display.setText(entryStr);
+        updateDisplay("%");
     }
 
     public void notBTN(View view){
         operatorUpdate();
-        entryStr += "NOT";
-        display.setText(entryStr);
+        updateDisplay("NOT");
     }
     public void andBTN(View view){
         operatorUpdate();
         if (superToggle) {
-            entryStr += "NAND";
+            updateDisplay("NAND");
         } else {
-            entryStr += "AND";
+            updateDisplay("AND");
         }
-        display.setText(entryStr);
     }
     public void orBTN(View view){
         operatorUpdate();
         if (superToggle) {
-            entryStr += "NOR";
+            updateDisplay("NOR");
         } else {
-            entryStr += "OR";
+            updateDisplay("OR");
         }
-        display.setText(entryStr);
     }
     public void xorBTN(View view){
         operatorUpdate();
         if (superToggle) {
-            entryStr += "XNOR";
+            updateDisplay("XNOR");
         } else {
-            entryStr += "XOR";
+            updateDisplay("XOR");
         }
-        display.setText(entryStr);
     }
 
     public void superBTN(View view){
@@ -866,48 +844,64 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void parBTN(View view){
-        showingResult();
-        int cursorPos = display.getSelectionStart();
-        int openPar = StringUtils.countMatches(entryStr, "(");
-        int closedPar = StringUtils.countMatches(entryStr, ")");
+        //showingResult();
+        String displayStr = getDisplayText();
+        //int cursorPos = display.getSelectionStart();
+        int openPar = StringUtils.countMatches(displayStr, "(");
+        int closedPar = StringUtils.countMatches(displayStr, ")");
 
-        if ((openPar == closedPar) || entryStr.matches(".*[(]")){
+        if ((openPar == closedPar) || displayStr.matches(".*[(]")) {
             alphaNumUpdate();
-            entryStr += "(";
-            display.setText(entryStr);
-        }
-        else if ((closedPar < openPar) && !entryStr.matches(".*[(]")){
-            if (entryStr.matches(".*[-+/*^%√]") || entryStr.endsWith("AND")
-                    || entryStr.endsWith("OR") || entryStr.endsWith("NOT") ) {
-                entryStr += " (";
+            updateDisplay("(");
+            //display.setSelection(cursorPos+1);
+        } else if ((closedPar < openPar) && !displayStr.matches(".*[(]")) {
+            if (displayStr.matches(".*[-+/*^%√]") || displayStr.endsWith("AND")
+                    || displayStr.endsWith("OR") || displayStr.endsWith("NOT") ) {
+                updateDisplay(" (");
             } else {
-                entryStr += " )";
+                updateDisplay(" )");
             }
-            display.setText(entryStr);
+            //display.setSelection(cursorPos+2);
         }
-        display.setSelection(cursorPos+1);
+    }
+
+    public void backspaceBTN(View view){
+        showingResult();
+        String displayStr = getDisplayText();
+        if (!displayStr.equals("")){
+            if (displayStr.endsWith("NAND") || displayStr.endsWith("XNOR")) {
+                displayStr = displayStr.substring(0, displayStr.length() - 4);
+            } else if (displayStr.endsWith("NaN") || displayStr.endsWith("AND") || displayStr.endsWith("NOR")
+                    || displayStr.endsWith("XOR") || displayStr.endsWith("NOT")) {
+                displayStr = displayStr.substring(0, displayStr.length() - 3);
+            } else if (displayStr.endsWith("OR")) {
+                displayStr = displayStr.substring(0, displayStr.length() - 2);
+            } else {
+                displayStr = displayStr.substring(0, displayStr.length() - 1);
+            }
+            clearDisplay();
+            updateDisplay(displayStr);
+        }
     }
 
     public void clearBTN(View view){
-        if (!entryStr.equals("")) {
-            entryStr = "";
-            display.setText(entryStr);
-        }
+        clearDisplay();
     }
 
     public void spaceBTN(View view){
-        if (!entryStr.matches(".*[ ]")) {
-            entryStr += " ";
-            display.setText(entryStr);
+        String displayStr = getDisplayText();
+        if (!displayStr.matches(".*[ ]")) {
+            updateDisplay(" ");
         }
     }
 
     public void equalBTN(View view){
         operatorUpdate();
-        String calcStr = getCleanedCalc(entryStr);
+        String displayStr = getDisplayText();
+        String calcStr = getCleanedCalc(displayStr);
 
         Expression e = new Expression(calcStr);
-        display.setText("");
+        clearDisplay();
         double r = e.calculate();
         String str = df.format(r);
         String note;
@@ -924,50 +918,35 @@ public class MainActivity extends AppCompatActivity {
 
         switch (bMode) {
             case Binary:
-                expHistory.add(entryStr + "[2] " + note);
-                entryStr = Integer.toString(Integer.parseInt(str, 10), 2);
-                expHistory.add("= " + entryStr + " [2] " + note);
+                expHistory.add(displayStr + "[2] " + note);
+                displayStr = Integer.toString(Integer.parseInt(str, 10), 2);
+                expHistory.add("= " + displayStr + " [2] " + note);
                 break;
             case Octal:
-                expHistory.add(entryStr + "[8] " + note);
-                entryStr = Integer.toString(Integer.parseInt(str, 10), 8);
-                expHistory.add("= " + entryStr + " [8] " + note);
+                expHistory.add(displayStr + "[8] " + note);
+                displayStr = Integer.toString(Integer.parseInt(str, 10), 8);
+                expHistory.add("= " + displayStr + " [8] " + note);
                 break;
             case Duodecimal:
-                expHistory.add(entryStr + "[12] " + note);
-                entryStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase();
-                expHistory.add("= " + entryStr + " [12] " + note);
+                expHistory.add(displayStr + "[12] " + note);
+                displayStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase();
+                expHistory.add("= " + displayStr + " [12] " + note);
                 break;
             case Hexadecimal:
-                expHistory.add(entryStr + "[16] " + note);
-                entryStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase();
-                expHistory.add("= " + entryStr + " [16] " + note);
+                expHistory.add(displayStr + "[16] " + note);
+                displayStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase();
+                expHistory.add("= " + displayStr + " [16] " + note);
                 break;
             default:
-                expHistory.add(entryStr + "[10] " + note);
-                entryStr = str;
-                expHistory.add("= " + entryStr + " [10] " + note);
+                expHistory.add(displayStr + "[10] " + note);
+                displayStr = str;
+                expHistory.add("= " + displayStr + " [10] " + note);
         }
 
-        display.setText(entryStr);
+        clearDisplay();
+        updateDisplay(displayStr);
         isResult = true;
     }
 
-    public void backspaceBTN(View view){
-        showingResult();
 
-        if (!entryStr.equals("")){
-            if (entryStr.endsWith("NAND") || entryStr.endsWith("XNOR")) {
-                entryStr = entryStr.substring(0, entryStr.length() - 4);
-            } else if (entryStr.endsWith("NaN") || entryStr.endsWith("AND") || entryStr.endsWith("NOR")
-                    || entryStr.endsWith("XOR") || entryStr.endsWith("NOT")) {
-                entryStr = entryStr.substring(0, entryStr.length() - 3);
-            } else if (entryStr.endsWith("OR")) {
-                entryStr = entryStr.substring(0, entryStr.length() - 2);
-            } else {
-                entryStr = entryStr.substring(0, entryStr.length() - 1);
-            }
-            display.setText(entryStr);
-        }
-    }
 }
