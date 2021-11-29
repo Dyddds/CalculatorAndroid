@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -1003,7 +1004,7 @@ public class MainActivity extends AppCompatActivity {
             case Duodecimal:
                 expHistory.add(displayStr + "[12] " + note);
                 if (!str.equals("NaN")) {
-                    displayStr = Integer.toString(Integer.parseInt(str, 10), 12) + rem;
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 12).toUpperCase() + rem;
                 } else {
                     displayStr = str;
                 }
@@ -1012,7 +1013,7 @@ public class MainActivity extends AppCompatActivity {
             case Hexadecimal:
                 expHistory.add(displayStr + "[16] " + note);
                 if (!str.equals("NaN")) {
-                    displayStr = Integer.toString(Integer.parseInt(str, 10), 16) + rem;
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 16).toUpperCase() + rem;
                 } else {
                     displayStr = str;
                 }

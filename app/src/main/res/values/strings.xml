@@ -23,7 +23,9 @@
         4. 4 ( 2 + 3 ) must be written\n
         as 4 * ( 2 + 3 )\n
         5. 2π and 2e must be written\n
-        as 2 * π and 2 * e
+        as 2 * π and 2 * e\n
+        6. 4 + - 8 must be written\n
+        as 4 + ( - 8 )
     </string>
 
     <string name="credits_members">
