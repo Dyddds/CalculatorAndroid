@@ -521,21 +521,33 @@ public class MainActivity extends AppCompatActivity {
         String str, exp;
         for (int i = preStack.size()-1; i >= 0 ; i--) {
             str = preStack.get(i);
-            if ((str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
-                    || str.equals("(+)")) && i < preStack.size()-2) {
-                exp = "(" + infixStack.get(infixStack.size()-1) + str + infixStack.get(infixStack.size()-2) + ")";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
-            } else if ((str.matches("sqrt") || str.equals("~")) && i < preStack.size()-1) {
-                exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
+            if (str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
+                    || str.equals("(+)")) {
+                if (infixStack.size() < 2) {
+                    return "error";
+                } else {
+                    exp = "(" + infixStack.get(infixStack.size() - 1) + str + infixStack.get(infixStack.size() - 2) + ")";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
+            } else if (str.matches("sqrt") || str.equals("~")) {
+                if (infixStack.size() < 1) {
+                    return "error";
+                } else {
+                    exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
             } else if (str.equals("~(+)")) {
-                exp = "(~(" + infixStack.get(infixStack.size()-1) + "(+)" + infixStack.get(infixStack.size()-2) + "))";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
+                if (infixStack.size() < 2) {
+                    return "error";
+                } else {
+                    exp = "(~(" + infixStack.get(infixStack.size() - 1) + "(+)" + infixStack.get(infixStack.size() - 2) + "))";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
             } else {
                 infixStack.add(str);
             }
@@ -547,21 +559,33 @@ public class MainActivity extends AppCompatActivity {
         String str, exp;
         for (int i = 0; i < postStack.size(); i++) {
             str = postStack.get(i);
-            if ((str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
-                    || str.equals("(+)")) && postStack.size() > 2 && i > 1) {
-                exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
-            } else if ((str.equals("sqrt") || str.equals("~")) && postStack.size() > 1) {
-                exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
+            if (str.matches(".*[-+/*^%&|]") || str.equals("~&") || str.equals("~|")
+                    || str.equals("(+)")) {
+                if (infixStack.size() < 2) {
+                    return "error";
+                } else {
+                    exp = "(" + infixStack.get(infixStack.size()-2) + str + infixStack.get(infixStack.size()-1) + ")";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
+            } else if (str.equals("sqrt") || str.equals("~")) {
+                if (infixStack.size() < 1) {
+                    return "error";
+                } else {
+                    exp = "(" + str + "(" + infixStack.get(infixStack.size() - 1) + "))";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
             } else if(str.equals("~(+)")) {
-                exp = "(~(" + infixStack.get(infixStack.size()-2) + "(+)" + infixStack.get(infixStack.size()-1) + "))";
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.remove(infixStack.size() - 1);
-                infixStack.add(exp);
+                if (infixStack.size() < 2) {
+                    return "error";
+                } else {
+                    exp = "(~(" + infixStack.get(infixStack.size() - 2) + "(+)" + infixStack.get(infixStack.size() - 1) + "))";
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.remove(infixStack.size() - 1);
+                    infixStack.add(exp);
+                }
             } else {
                 infixStack.add(str);
             }

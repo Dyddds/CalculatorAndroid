@@ -25,4 +25,14 @@
             android:icon="@drawable/history"
             android:title="History" />
     </group>
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/bav_help"
+            android:icon="@drawable/history"
+            android:title="Help" />
+        <item
+            android:id="@+id/na"
+            android:icon="@drawable/history"
+            android:title="About" />
+    </group>
 </menu>
