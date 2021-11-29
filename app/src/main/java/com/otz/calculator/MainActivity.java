@@ -965,8 +965,8 @@ public class MainActivity extends AppCompatActivity {
         clearDisplay();
         double r = e.calculate();
         str = df.format(r);
-        if (bMode != Base.Decimal && !str.equals(ndf.format(r)) && !str.equals("NaN")){
-            str = ndf.format(r);
+        if (bMode != Base.Decimal && str.contains(".") && !str.equals("NaN")){
+            str = str.substring(0, str.indexOf('.'));
             rem = " [R]";
         }
 
