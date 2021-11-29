@@ -7,6 +7,35 @@
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
+    <string name="help_notation">
+        Prefix:\n
+        2 + 7 - 5 => - + 2 7 5\n
+        2 + 7 / 5 => + 2 * 7 5\n
+        Postfix:\n
+        2 + 7 - 5 => 2 7 + 5 -\n
+        2 + 7 / 5 => 2 7 5 / +
+    </string>
+
+    <string name="help_rules">
+        1. Values being squarerooted in Infix Mode must be in parentheses\n
+        2. Space must be used to separate operands in Prefix and Postfix Modes\n
+        3. [R] in result means the result has values after the decimal and is not able to be converted to a non-Base 10 format\n
+        4. 4 ( 2 + 3 ) must be written as 4 * ( 2 + 3 )\n
+        5. 2π and 2e must be written as 2 * π and 2 * e
+    </string>
+
+    <string name="credits_members">
+        <b>Programmer</b>:\n
+        Shebin Skaria\n
+        <b>Icons</b>:\n
+        Joey Hussain\n
+        <b>Assistants</b>:\n
+        Mhd Diaa Alnahhas\n
+        Steven Guilbert
+    </string>
+
+    <string name="credits_themes">Themes from Canva</string>
+
     <!-- Nav Titles -->
     <string name="menu_home">Calculator</string>
     <string name="menu_notation">Notation</string>

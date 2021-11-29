@@ -27,12 +27,12 @@
     </group>
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/bav_help"
-            android:icon="@drawable/history"
+            android:id="@+id/nav_help"
+            android:icon="@drawable/help"
             android:title="Help" />
         <item
-            android:id="@+id/na"
-            android:icon="@drawable/history"
-            android:title="About" />
+            android:id="@+id/nav_credits"
+            android:icon="@drawable/about"
+            android:title="Credits" />
     </group>
 </menu>

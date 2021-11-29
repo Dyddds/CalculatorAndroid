@@ -123,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                     historyDialog();
                 } else if (id == R.id.nav_theme){
                     popup(4);
+                } else if (id == R.id.nav_help){
+                    popup(5);
+                } else if (id == R.id.nav_credits){
+                    popup(6);
                 }
                 //This is for maintaining the behavior of the Navigation view
                 //NavigationUI.onNavDestinationSelected(menuItem,navController);
@@ -178,11 +182,14 @@ public class MainActivity extends AppCompatActivity {
             case 2:
                 popupView = inflater.inflate(R.layout.popup_base, null);
                 break;
-            case 3:
-                popupView = inflater.inflate(R.layout.popup_history, null);
+            case 4:
+                popupView = inflater.inflate(R.layout.popup_theme, null);
+                break;
+            case 5:
+                popupView = inflater.inflate(R.layout.popup_help, null);
                 break;
             default:
-                popupView = inflater.inflate(R.layout.popup_theme, null);
+                popupView = inflater.inflate(R.layout.popup_about, null);
                 break;
         }
 
