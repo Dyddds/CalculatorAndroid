@@ -15,7 +15,7 @@
         android:text="Choose Theme"
         android:textSize="24sp"
         android:textAllCaps="true"
-        android:background="#eeeeee"/>
+        android:background="#eeeeee" />
 
     <Button
         android:id="@+id/BtnLight"

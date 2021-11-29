@@ -2,8 +2,10 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".ui.home.HomeFragment">
 
     <TableLayout
@@ -142,7 +144,6 @@
                 android:textSize="24sp"
                 app:backgroundTint="@null" />
 
-
             <Button
                 android:id="@+id/fBTN"
                 style="@style/Widget.AppCompat.Button.Borderless"
@@ -158,7 +159,6 @@
                 app:backgroundTint="@null" />
 
             <Button
-
                 style="@style/Widget.AppCompat.Button.Borderless"
                 android:layout_width="0dp"
                 android:layout_height="70dp"
@@ -559,27 +559,35 @@
         </TableRow>
     </TableLayout>
 
-    <EditText
-        android:id="@+id/input"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="0dp"
-        android:text=""
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:ellipsize="end"
-        android:autofillHints="false"
-        android:inputType="none"
-        android:textSize="36sp"
-        android:textAlignment="textEnd"
-        tools:ignore="LabelFor"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:textIsSelectable="true"
-        android:singleLine="true"
-        android:scrollHorizontally="true"
-        />
+        android:background="@color/black">
+        <EditText
+            android:id="@+id/input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="1dp"
+            android:layout_marginBottom="2dp"
+            android:text=""
+            android:ellipsize="end"
+            android:autofillHints="false"
+            android:inputType="none"
+            android:textSize="36sp"
+            android:textAlignment="textEnd"
+            tools:ignore="LabelFor"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:textIsSelectable="true"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:background="@color/white"
+            />
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--

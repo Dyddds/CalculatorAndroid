@@ -6,21 +6,23 @@
 
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/nav_base"
+            android:icon="@drawable/base"
+            android:title="Base" />
+        <item
             android:id="@+id/nav_notation"
             android:icon="@drawable/notation"
             android:title="Notation"
             />
         <item
-            android:id="@+id/nav_base"
-            android:icon="@drawable/base"
-            android:title="Base" />
+            android:id="@+id/nav_theme"
+            android:icon="@drawable/themeicon"
+            android:title="Theme" />
+    </group>
+    <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/history"
             android:title="History" />
-        <item
-            android:id="@+id/nav_theme"
-            android:icon="@drawable/themeicon"
-            android:title="Theme" />
     </group>
 </menu>

@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatDelegate;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.view.GravityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -191,24 +191,21 @@ public class MainActivity extends AppCompatActivity {
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
-
     }
 
     public void changeNotation(View v) {
         switch (v.getId()) {
             case (R.id.Pre):
                 nMode = Notation.Prefix;
-                enforceNotationButtons();
                 break;
             case (R.id.In):
                 nMode = Notation.Infix;
-                enforceNotationButtons();
                 break;
             case (R.id.Post):
                 nMode = Notation.Postfix;
-                enforceNotationButtons();
                 break;
         }
+        enforceNotationButtons();
         clearDisplay();
         popupWindow.dismiss();
     }
@@ -216,50 +213,42 @@ public class MainActivity extends AppCompatActivity {
         switch (v.getId()) {
             case (R.id.BtnLight):
                 tMode = Theme.Light;
-                enforceThemeButtons();
                 break;
             case (R.id.BtnDark):
                 tMode = Theme.Dark;
-                enforceThemeButtons();
                 break;
             case (R.id.BtnSpace):
                 tMode = Theme.Space;
-                enforceThemeButtons();
                 break;
             case (R.id.BtnFlower):
                 tMode = Theme.Flower;
-                enforceThemeButtons();
                 break;
             case (R.id.BtnWooden):
                 tMode = Theme.Wooden;
-                enforceThemeButtons();
                 break;
         }
+        enforceTheme();
         popupWindow.dismiss();
     }
     public void changeBase(View v) {
         switch (v.getId()) {
             case (R.id.Bin):
                 bMode = Base.Binary;
-                enforceBaseButtons();
                 break;
             case (R.id.Oct):
                 bMode = Base.Octal;
-                enforceBaseButtons();
                 break;
             case (R.id.Dec):
                 bMode = Base.Decimal;
-                enforceBaseButtons();
                 break;
             case (R.id.Duo):
                 bMode = Base.Duodecimal;
-                enforceBaseButtons();
                 break;
             case (R.id.Hex):
                 bMode = Base.Hexadecimal;
-                enforceBaseButtons();
                 break;
         }
+        enforceBaseButtons();
         clearDisplay();
         popupWindow.dismiss();
     }
@@ -274,15 +263,32 @@ public class MainActivity extends AppCompatActivity {
             paren.setBackgroundResource(R.drawable.buttondisabled);
         }
     }
-    private void enforceThemeButtons(){
-        int currenttheme = 0;
-        if (tMode == Theme.Light) {
-            currenttheme = AppCompatDelegate.MODE_NIGHT_NO;
+    private void enforceTheme(){
+        NavigationView navDraw = findViewById(R.id.nav_view);
+        ConstraintLayout mainPage = findViewById(R.id.main_background);
 
-        } else if (tMode == Theme.Dark) {
-            currenttheme = AppCompatDelegate.MODE_NIGHT_YES;
+        switch (tMode) {
+            case Light:
+                navDraw.setBackgroundResource(R.color.white);
+                mainPage.setBackgroundResource(R.color.white);
+                break;
+            case Dark:
+                navDraw.setBackgroundResource(R.color.black);
+                mainPage.setBackgroundResource(R.color.black);
+                break;
+            case Space:
+                navDraw.setBackgroundResource(R.drawable.space);
+                mainPage.setBackgroundResource(R.drawable.space_dark);
+                break;
+            case Flower:
+                navDraw.setBackgroundResource(R.drawable.flower);
+                mainPage.setBackgroundResource(R.drawable.flower_dark);
+                break;
+            case Wooden:
+                navDraw.setBackgroundResource(R.drawable.wooden);
+                mainPage.setBackgroundResource(R.drawable.wooden_dark);
+                break;
         }
-        AppCompatDelegate.setDefaultNightMode(currenttheme);
     }
     private void enforceBaseButtons(){
         switch (bMode){
