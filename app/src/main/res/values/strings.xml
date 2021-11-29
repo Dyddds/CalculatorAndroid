@@ -20,8 +20,10 @@
         1. Values being squarerooted in Infix Mode must be in parentheses\n
         2. Space must be used to separate operands in Prefix and Postfix Modes\n
         3. [R] in result means the result has values after the decimal and is not able to be converted to a non-Base 10 format\n
-        4. 4 ( 2 + 3 ) must be written as 4 * ( 2 + 3 )\n
-        5. 2π and 2e must be written as 2 * π and 2 * e
+        4. 4 ( 2 + 3 ) must be written\n
+        as 4 * ( 2 + 3 )\n
+        5. 2π and 2e must be written\n
+        as 2 * π and 2 * e
     </string>
 
     <string name="credits_members">

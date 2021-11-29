@@ -964,7 +964,7 @@ public class MainActivity extends AppCompatActivity {
         clearDisplay();
         double r = e.calculate();
         str = df.format(r);
-        if (bMode != Base.Decimal && !str.equals(ndf.format(r))){
+        if (bMode != Base.Decimal && !str.equals(ndf.format(r)) && !str.equals("NaN")){
             str = ndf.format(r);
             rem = " [R]";
         }
@@ -984,22 +984,38 @@ public class MainActivity extends AppCompatActivity {
         switch (bMode) {
             case Binary:
                 expHistory.add(displayStr + "[2] " + note);
-                displayStr = Integer.toString(Integer.parseInt(str, 10), 2) + rem;
+                if (!str.equals("NaN")) {
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 2) + rem;
+                } else {
+                    displayStr = str;
+                }
                 expHistory.add("= " + displayStr + rem + " [2] " + note);
                 break;
             case Octal:
                 expHistory.add(displayStr + "[8] " + note);
-                displayStr = Integer.toString(Integer.parseInt(str, 10), 8) + rem;
+                if (!str.equals("NaN")) {
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 8) + rem;
+                } else {
+                    displayStr = str;
+                }
                 expHistory.add("= " + displayStr + rem + " [8] " + note);
                 break;
             case Duodecimal:
                 expHistory.add(displayStr + "[12] " + note);
-                displayStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase() + rem;
+                if (!str.equals("NaN")) {
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 12) + rem;
+                } else {
+                    displayStr = str;
+                }
                 expHistory.add("= " + displayStr + " [12] " + note);
                 break;
             case Hexadecimal:
                 expHistory.add(displayStr + "[16] " + note);
-                displayStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase() + rem;
+                if (!str.equals("NaN")) {
+                    displayStr = Integer.toString(Integer.parseInt(str, 10), 16) + rem;
+                } else {
+                    displayStr = str;
+                }
                 expHistory.add("= " + displayStr + " [16] " + note);
                 break;
             default:
