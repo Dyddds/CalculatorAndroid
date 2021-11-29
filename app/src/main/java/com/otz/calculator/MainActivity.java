@@ -36,7 +36,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-//TODO (DROPPED) Add Cursor on result screen
 //TODO Separate into different classes
 //TODO Add item item on actionBar to show Notation
 
@@ -45,7 +44,6 @@ import java.util.Arrays;
 public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
-    private ActivityMainBinding binding;
 
     enum Notation {
         Prefix, Infix, Postfix
@@ -68,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     private boolean isResult;
     private boolean superToggle;
     DecimalFormat df = new DecimalFormat("#.#######");
+    DecimalFormat ndf = new DecimalFormat("#");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         isResult = false;
         superToggle = false;
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         setSupportActionBar(binding.appBarMain.toolbar);
 
@@ -147,10 +146,6 @@ public class MainActivity extends AppCompatActivity {
     private void updateDisplay(String strToAdd){
         String displayStr = display.getText().toString();
         int cursorPos = display.getSelectionStart();
-        /*String leftStr = displayStr.substring(0,cursorPos);
-        String rightStr = displayStr.substring(cursorPos);
-        display.setText(R.string.display);
-        display.setText(String.format("%s%s%s", leftStr, strToAdd, rightStr));*/
         display.setText(String.format("%s%s", displayStr, strToAdd));
         display.setSelection(cursorPos+strToAdd.length());
     }
@@ -158,6 +153,9 @@ public class MainActivity extends AppCompatActivity {
         display.setText("");
     }
 
+    public void historyBTN (MenuItem m){
+        historyDialog();
+    }
     public void historyDialog() {
         dialog.show();
         dialog.setContentView(R.layout.popup_history);
@@ -165,7 +163,7 @@ public class MainActivity extends AppCompatActivity {
         dialog.setCancelable(true);
         ArrayAdapter<String> hAdapter = new ArrayAdapter<> (MainActivity.this,R.layout.history_item,expHistory);
         hList.setAdapter(hAdapter);
-        int width = (int)(getResources().getDisplayMetrics().widthPixels);
+        int width = (getResources().getDisplayMetrics().widthPixels);
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
         dialog.getWindow().setLayout(width, height);
     }
@@ -191,8 +189,7 @@ public class MainActivity extends AppCompatActivity {
         // create the popup window
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-        boolean focusable = true; // lets taps outside the popup also dismiss it
-        popupWindow = new PopupWindow(popupView, width, height, focusable);
+        popupWindow = new PopupWindow(popupView, width, height, true);
         popupWindow.showAtLocation(popupView, Gravity.CENTER, 0, 0);
 
     }
@@ -435,9 +432,16 @@ public class MainActivity extends AppCompatActivity {
         String expression = hI.getText().toString();
         String displayStr;
         dialog.dismiss();
+        int posStart, posEnd;
 
-        int posStart = expression.indexOf('[');
-        int posEnd = expression.indexOf(']');
+        if (expression.contains("[R]")) {
+            posStart = expression.indexOf('[');
+            posEnd = expression.indexOf(']');
+            expression = expression.substring(0, posStart-1) + expression.substring(posEnd+1);
+        }
+
+        posStart = expression.indexOf('[');
+        posEnd = expression.indexOf(']');
         String str = expression.substring(0, posStart);
         String base = expression.substring(posStart+1, posEnd);
         String tMessage = "";
@@ -656,33 +660,45 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    //Clears entry if the entry is showing result
-    public void showingResult(){
-        if (isResult) {
-            updateDisplay(" ");
-            isResult = false;
+    private void clearRemainder(){
+        String displayStr = getDisplayText();
+        if (displayStr.contains("[R]")) {
+            int pos = displayStr.indexOf('[');
+            displayStr = displayStr.substring(0, pos);
+            clearDisplay();
+            updateDisplay(displayStr);
         }
     }
 
     public void alphaNumUpdate(){
         String displayStr = getDisplayText();
         if (isResult) {
-            clearDisplay();
+            if (nMode == Notation.Postfix && !displayStr.endsWith("NaN")) {
+                updateDisplay(" ");
+            } else {
+                clearDisplay();
+            }
+            clearRemainder();
             isResult = false;
         } else if (!displayStr.equals("") && (displayStr.matches(".*[-+/*√)(^%]")
-                || displayStr.endsWith("NaN") || displayStr.endsWith("AND")
-                || displayStr.endsWith("NOT") || displayStr.endsWith("OR"))) {
+                || displayStr.endsWith("AND") || displayStr.endsWith("NOT") || displayStr.endsWith("OR"))) {
             updateDisplay(" ");
         }
     }
     public void operatorUpdate(){
         String displayStr = getDisplayText();
-        if (!displayStr.equals("") && !displayStr.matches(".*[ ]")) {
+        if (isResult) {
+            if (nMode != Notation.Prefix && !displayStr.endsWith("NaN")) {
+                updateDisplay(" ");
+            } else {
+                clearDisplay();
+            }
+            clearRemainder();
+            isResult = false;
+        } else if (!displayStr.equals("") && !displayStr.endsWith(" ")) {
             updateDisplay(" ");
         }
-        if (isResult) {
-            isResult = false;
-        }
+
     }
 
     public void zeroBTN(View view){
@@ -844,29 +860,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void parBTN(View view){
-        //showingResult();
+        if (isResult) {
+            clearDisplay();
+            isResult = false;
+        }
+
         String displayStr = getDisplayText();
-        //int cursorPos = display.getSelectionStart();
         int openPar = StringUtils.countMatches(displayStr, "(");
         int closedPar = StringUtils.countMatches(displayStr, ")");
 
         if ((openPar == closedPar) || displayStr.matches(".*[(]")) {
             alphaNumUpdate();
+            operatorUpdate();
             updateDisplay("(");
-            //display.setSelection(cursorPos+1);
-        } else if ((closedPar < openPar) && !displayStr.matches(".*[(]")) {
+        } else if ((closedPar < openPar) && !displayStr.endsWith("(")) {
             if (displayStr.matches(".*[-+/*^%√]") || displayStr.endsWith("AND")
                     || displayStr.endsWith("OR") || displayStr.endsWith("NOT") ) {
                 updateDisplay(" (");
             } else {
                 updateDisplay(" )");
             }
-            //display.setSelection(cursorPos+2);
         }
     }
 
     public void backspaceBTN(View view){
-        showingResult();
+        if (isResult) {
+            clearRemainder();
+            isResult = false;
+        }
         String displayStr = getDisplayText();
         if (!displayStr.equals("")){
             if (displayStr.endsWith("NAND") || displayStr.endsWith("XNOR")) {
@@ -899,11 +920,18 @@ public class MainActivity extends AppCompatActivity {
         operatorUpdate();
         String displayStr = getDisplayText();
         String calcStr = getCleanedCalc(displayStr);
+        String rem = "";
+        String str;
 
         Expression e = new Expression(calcStr);
         clearDisplay();
         double r = e.calculate();
-        String str = df.format(r);
+        str = df.format(r);
+        if (bMode != Base.Decimal && !str.equals(ndf.format(r))){
+            str = ndf.format(r);
+            rem = " [R]";
+        }
+
         String note;
         switch (nMode) {
             case Prefix:
@@ -919,22 +947,22 @@ public class MainActivity extends AppCompatActivity {
         switch (bMode) {
             case Binary:
                 expHistory.add(displayStr + "[2] " + note);
-                displayStr = Integer.toString(Integer.parseInt(str, 10), 2);
-                expHistory.add("= " + displayStr + " [2] " + note);
+                displayStr = Integer.toString(Integer.parseInt(str, 10), 2) + rem;
+                expHistory.add("= " + displayStr + rem + " [2] " + note);
                 break;
             case Octal:
                 expHistory.add(displayStr + "[8] " + note);
-                displayStr = Integer.toString(Integer.parseInt(str, 10), 8);
-                expHistory.add("= " + displayStr + " [8] " + note);
+                displayStr = Integer.toString(Integer.parseInt(str, 10), 8) + rem;
+                expHistory.add("= " + displayStr + rem + " [8] " + note);
                 break;
             case Duodecimal:
                 expHistory.add(displayStr + "[12] " + note);
-                displayStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase();
+                displayStr = (Integer.toString(Integer.parseInt(str, 10), 12)).toUpperCase() + rem;
                 expHistory.add("= " + displayStr + " [12] " + note);
                 break;
             case Hexadecimal:
                 expHistory.add(displayStr + "[16] " + note);
-                displayStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase();
+                displayStr = (Integer.toString(Integer.parseInt(str, 10), 16)).toUpperCase() + rem;
                 expHistory.add("= " + displayStr + " [16] " + note);
                 break;
             default:
