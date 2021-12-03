@@ -12,7 +12,28 @@
         android:layout_margin="5dp"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="Credits"
+        android:text="App Info"
+        android:textSize="24sp"
+        android:textAllCaps="true"
+        android:background="#eeeeee"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:gravity="start"
+        android:text="@string/credits_info"
+        android:textSize="18sp"
+        android:background="#eeeeee"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="OTZ Members"
         android:textSize="24sp"
         android:textAllCaps="true"
         android:background="#eeeeee"/>
@@ -27,6 +48,16 @@
         android:textSize="18sp"
         android:background="#eeeeee"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Credits"
+        android:textSize="24sp"
+        android:textAllCaps="true"
+        android:background="#eeeeee"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

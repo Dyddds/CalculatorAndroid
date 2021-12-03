@@ -31,16 +31,23 @@
     </string>
 
     <string name="credits_members">
-        <b>Programmer</b>:\n
+        <b>Lead Programmer</b>:\n
         Shebin Skaria\n
-        <b>Icons</b>:\n
+        <b>Team Captain</b>:\n
         Joey Hussain\n
-        <b>Assistants</b>:\n
+        <b>Programmers</b>:\n
         Mhd Diaa Alnahhas\n
         Steven Guilbert
     </string>
 
-    <string name="credits_themes">Themes from Canva</string>
+    <string name="credits_info">
+        This application was designed by the team of <b> One Triple Zero (OTZ)</b>.\n\n
+        The primary goal of our application was to create a tool that could aid people learning computer systems.\n\n
+        If you need any information on how to use the calculator. Please go to the help page in settings.
+
+    </string>
+
+    <string name="credits_themes">Themes/Logos designed on Canva</string>
 
     <!-- Nav Titles -->
     <string name="menu_home">Calculator</string>
